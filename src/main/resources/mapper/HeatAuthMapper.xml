@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.mapper.HeatAuthMapper">
+
+    <select id="selectUserAuth" resultType="com.huang.entity.HeatAuth">
+        select*
+        from yunchun.heat_authority
+        where username=#{username} and ISNULL(heat_authority.custom_authority);
+    </select>
+    <select id="selectUserDis" resultType="com.huang.entity.HeatAuth">
+        select*
+        from yunchun.heat_authority
+        where username=#{username} and ISNULL(heat_authority.admin_authority);
+    </select>
+
+    <select id="selectAdminByAuth" resultType="com.huang.entity.HeatAuth">
+        select *
+        from yunchun.heat_authority
+        where admin_authority like CONCAT(#{adminAuth},'%') and admin_authority!=#{adminAuth} and ISNULL(custom_authority);
+    </select>
+
+    <select id="selectDisByAuth" resultType="com.huang.entity.HeatAuth">
+        select *
+        from yunchun.heat_authority
+        where custom_authority like CONCAT(#{adminAuth},'%') and custom_authority!=#{adminAuth} and isnull(admin_authority);
+    </select>
+    <delete id="deleteByAdmin">
+        delete from yunchun.heat_authority
+        where username=#{username} and admin_authority=#{adminAuth};
+    </delete>
+    <delete id="deleteByDis">
+        delete from yunchun.heat_authority
+        where username=#{username} and custom_authority=#{disAuth};
+    </delete>
+    <select id="checkByAuth" resultType="com.huang.entity.HeatAuth">
+        select *
+        from yunchun.heat_authority
+        where username=#{username} and admin_authority=#{adminAuth} ;
+    </select>
+    <select id="checkByDis" resultType="com.huang.entity.HeatAuth">
+        select *
+        from yunchun.heat_authority
+        where username=#{username} and custom_authority=#{disAuth};
+    </select>
+    <select id="selectSystemUser" resultType="com.huang.entity.User">
+        select*
+        from yunchun.sys_user
+    </select>
+    <select id="selectSysUser" resultType="com.huang.entity.User">
+        select *
+        from yunchun.sys_user
+        where username=#{username};
+    </select>
+    <update id="saveSysPar" parameterType="com.huang.entity.HeatSys">
+        update  yunchun.heat_sys
+        <set>
+            <if test="#{unitPrice}!=null">
+                unit_price = #{unitPrice},
+            </if>
+            <if test="#{lateTimes}!=null">
+                late_times = #{lateTimes},
+            </if>
+            <if test="#{interestRate}!=null">
+                interest_rate = #{interestRate},
+            </if>
+            <if test="#{payCycle}!=null">
+                pay_cycle = #{payCycle}
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+</mapper>

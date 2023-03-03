@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.mapper.PayPlanMapper">
+
+    <select id="selectOnePayPlan" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+        where contract_number=#{contractNumber};
+    </select>
+    <select id="selectPayPlanById" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+        where id=#{id};
+    </select>
+    <select id="selectPayPlanHistory" resultType="com.huang.entity.PayplanHistory">
+        select *
+        from yunchun.payplan_history
+    </select>
+    <select id="PayPlanSelectAllAll" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+    </select>
+    <select id="PayPlanSelectAllAbout" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+        where pay_status='即将逾期';
+    </select>
+    <select id="PayPlanSelectAllLate" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+        where pay_status='已逾期' or pay_status='欠款未还清';
+    </select>
+    <select id="PayPlanSelectSingleAll" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+        where employee_no=#{employeeNo};
+    </select>
+    <select id="PayPlanSelectSingleAbout" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+        where employee_no=#{employeeNo} and pay_status='即将逾期';
+    </select>
+    <select id="PayPlanSelectSingleLate" resultType="com.huang.entity.PayPlan">
+        select *
+        from yunchun.pay_plan
+        where employee_no=#{employeeNo} and (pay_status='已逾期' or pay_status='欠款未还清');
+    </select>
+    <insert id="insertPayplanHistory" parameterType="com.huang.entity.PayplanHistory" >
+        insert into yunchun.payplan_history(contract_no,modify_time,modify_by,review_by)
+        VALUES(#{contractNo},#{modifyTime},#{modifyBy},#{reviewBy});
+    </insert>
+
+</mapper>

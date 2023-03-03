@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.mapper.HeatUserMapper">
+    <select id="ifUserExist" resultType="com.huang.entity.HeatUser">
+        select*
+        from yunchun.heat_user
+        where district=#{district} and account=#{account};
+    </select>
+    <update id="upDateUser" parameterType="com.huang.entity.HeatUser">
+        update  yunchun.heat_user
+        <set>
+            <if test="#{name}!=null">
+                name = #{name},
+            </if>
+            <if test="#{phone}!=null">
+                phone = #{phone},
+            </if>
+            <if test="#{heatArea}!=null">
+                heat_area = #{heatArea},
+            </if>
+            <if test="#{date}!=null">
+                date=#{date},
+            </if>
+            <if test="#{payStatus}!=null">
+                pay_status=#{payStatus},
+            </if>
+            <if test="#{failPay}!=null">
+                fail_pay=#{failPay},
+            </if>
+            <if test="#{payAmount}!=null">
+                pay_amount=#{payAmount},
+            </if>
+            <if test="#{userBalance}!=null">
+                user_balance=#{userBalance}
+            </if>
+        </set>
+        <where>
+            district= #{district} and account=#{account}
+        </where>
+    </update>
+    <insert id="insertUser" parameterType="com.huang.entity.HeatUser" >
+        insert into yunchun.heat_user(name,phone,district,account,heat_area,date,pay_status,fail_pay,user_balance,pay_amount)
+        VALUES(#{name},#{phone},#{district},#{account},#{heatArea},#{date},#{payStatus},#{failPay},#{userBalance},#{payAmount});
+    </insert>
+    <select id="selectUserByAuth" resultType="com.huang.entity.HeatUser">
+        select *
+        from yunchun.heat_user
+        where heat_user.district =#{adminAuth};
+    </select>
+    <select id="selectSysPara" resultType="com.huang.entity.HeatSys">
+        select *
+        from yunchun.heat_sys
+    </select>
+    <delete id="deleteByUser" parameterType="com.huang.entity.HeatUser">
+        delete from yunchun.heat_user
+        where district= #{heatUser.district} and account=#{heatUser.account};
+    </delete>
+    <insert id="insertRecord" parameterType="com.huang.entity.HeatRecord" >
+        insert into yunchun.heat_record(date,amount,collector,district,account)
+        VALUES(#{date},#{amount},#{collector},#{district},#{account});
+    </insert>
+    <select id="selectRecordByUser" resultType="com.huang.entity.HeatRecord">
+        select*
+        from yunchun.heat_record
+        where district=#{district} and account=#{account};
+    </select>
+    <update id="upDateUserLimited" parameterType="com.huang.vo.HeatSaveUserVO">
+        update  yunchun.heat_user
+        <set>
+            <if test="#{name}!=null">
+            name = #{name},
+            </if>
+            <if test="#{phone}!=null">
+                phone = #{phone},
+            </if>
+            <if test="#{heatArea}!=null">
+                heat_area = #{heatArea}
+            </if>
+        </set>
+        <where>
+            district= #{district} and account=#{account}
+        </where>
+    </update>
+    <select id="selectUserAuth" resultType="com.huang.entity.HeatAuth">
+        select*
+        from yunchun.heat_authority
+        where username=#{username} and ISNULL(heat_authority.admin_authority);
+    </select>
+    <select id="selectUserAdminAuth" resultType="com.huang.entity.HeatAuth">
+        select*
+        from yunchun.heat_authority
+        where username=#{username} and ISNULL(heat_authority.custom_authority);
+    </select>
+    <select id="selectUserByAdminAuth" resultType="com.huang.entity.HeatUser">
+        select *
+        from yunchun.heat_user
+        where district like CONCAT(#{adminAuth},'%');
+    </select>
+
+</mapper>
