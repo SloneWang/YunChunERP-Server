@@ -1,36 +1,38 @@
 package com.huang.vo;
 
+import com.huang.entity.ContractProduct;
+import com.huang.entity.ProductInformation;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
 @Data
 public class SaveContractVO {
 
+    //合同编号
     private String contractNumber;
+    //会员编号
+    private String memberNo;
+    //待审核信息(不超过500字)
+    private String requestComment;
+    //发票类型
     private String invoiceType;
+    //当前员工编号
     private String employeeNo;
-//    private String  reviewerNo;
-//    private String  reviewerName;
-//    private String  reviewerComment;
-    private String  customerCompany;
-    private String  customerName;
-    private String  customerPhonenum;
-    private String  secCustomerName;
-    private String  secCustomerPhonenum;
+    //安装地址
     private String installAddress;
+    //送货方式“自提”或者“送货”
     private String deliveryMethod;
+    //加价金额
     private BigDecimal upAmount;
-    //客户所属行业
-    private String industry;
-    //客户职务
-    private String customerJob;
-    //渠道来源
-    private String channel;
-    private Integer productNumber;
+    //还款周期
     private Integer payCycle;
+    //第一次还款日
     private Date payDate;
+    //每次还款金额
     private BigDecimal amountPlan;
-    private String productNo;
+    //产品列表
+    private List<ContractProduct> contractProducts;
 }

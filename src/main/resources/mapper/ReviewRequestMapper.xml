@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.mapper.ReviewRequestMapper">
+
+    <select id="selectReviewInformation" resultType="com.huang.entity.ReviewRequest">
+        select *
+        from yunchun.review_request
+        where index_no!='0';
+    </select>
+    <select id="selectOne" resultType="com.huang.entity.ReviewRequest">
+        select *
+        from yunchun.review_request
+        where id=#{id};
+    </select>
+
+    <update id="setContractProduct" parameterType="com.huang.entity.ContractProduct">
+        update  yunchun.contract_product
+        set tag = 1
+        where tag=0 and contract_no=#{contractNo};
+    </update>
+
+    <update id="setContract" parameterType="com.huang.entity.Contract">
+        update  yunchun.salesman_contract
+        set tag = 1,reviewer_no = #{reviewerNo}
+        where tag=0 and contract_no=#{contractNo};
+    </update>
+
+    <update id="setPayPlan" parameterType="com.huang.entity.PayPlan">
+        update  yunchun.pay_plan
+        set tag = 1
+        where tag=0 and contract_no=#{contractNo};
+    </update>
+
+    <delete id="deleteContractProduct">
+        delete from yunchun.contract_product
+        where tag=0 and contract_no=#{contractNo};
+    </delete>
+
+    <delete id="deleteContract">
+        delete from yunchun.salesman_contract
+        where tag=0 and contract_no=#{contractNo};
+    </delete>
+
+    <delete id="deletePayPlan">
+        delete from yunchun.pay_plan
+        where tag=0 and contract_no=#{contractNo};
+    </delete>
+
+</mapper>

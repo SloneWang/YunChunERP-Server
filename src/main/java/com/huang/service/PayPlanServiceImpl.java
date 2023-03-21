@@ -10,8 +10,6 @@ import com.huang.vo.UpdatePayPlanVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -24,81 +22,84 @@ public class PayPlanServiceImpl extends ServiceImpl<PayPlanMapper, PayPlan> impl
     PayPlanMapper payPlanMapper;
     @Autowired
     SalesmanMapper salesmanMapper;
+    @Autowired
+    SalesmanServiceImpl salesmanService;
     @Override
     public boolean savePayPlan(PayPlan payPlan){
         return saveOrUpdate(payPlan);
     }
     @Override
-    public Result selectPayPlan(Integer id){
+    public Object selectPayPlan(Integer id){
         try {
             List<PayPlan> data=new ArrayList<>();
             List<Contract> contracts=salesmanMapper.selectContractById(id);
             if(contracts.size()!=0){
-                String contractNumber=contracts.get(0).getContractNumber();
+                String contractNumber=contracts.get(0).getContractNo();
                 data = payPlanMapper.selectOnePayPlan(contractNumber);
             }
-            if(data.size()!=0) return new Result("200","",data.get(0));
-            else return new Result("204","未查询到符合条件的数据","");
+            if(data.size()!=0) return data.get(0);
+            else return "未查询到符合条件的数据";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Result updatePayPlan(UpdatePayPlanVO payPlanData) {
+    public Object updatePayPlan(UpdatePayPlanVO payPlanData) {
         try {
             PayPlan payPlanTemp=new PayPlan();
             payPlanTemp.setId(payPlanData.getId());
             payPlanTemp.setAmountPlan(payPlanData.getAmountPlan());
-            payPlanTemp.setAmountNotPaid(payPlanData.getAmountNotPaid());
             payPlanTemp.setPayCycle(payPlanData.getPayCycle());
+            payPlanTemp.setAmountNotPaid(payPlanData.getAmountNotPaid());
 
             if(payPlanData.getEmployeeNo()!=null&&!payPlanData.getEmployeeNo().equals("")){
                 List<User> users=salesmanMapper.selectEmployeeInformation(payPlanData.getEmployeeNo());
                 if(users.size()!=0) {
-                    User user=salesmanMapper.selectEmployeeInformation(payPlanData.getEmployeeNo()).get(0);
                     payPlanTemp.setEmployeeNo(payPlanData.getEmployeeNo());
-                    payPlanTemp.setEmployeeName(user.getName());
                 }
-                else {return new Result("415","无法找到对应编号的员工","");}
+                else {return "无法找到对应编号的员工";}
             }
 
             //改动记录
             PayplanHistory payplanHistory=new PayplanHistory();
             PayPlan payPlanSelect=payPlanMapper.selectPayPlanById(payPlanData.getId()).get(0);
-            payplanHistory.setContractNo(payPlanSelect.getContractNumber());
+            payplanHistory.setContractNo(payPlanSelect.getContractNo());
             payplanHistory.setModifyBy(payPlanData.getModifyBy());
             payplanHistory.setModifyTime(new java.util.Date(System.currentTimeMillis()));
+
+
+
             if (!payPlanMapper.insertPayplanHistory(payplanHistory)){
-                return new Result("500","修改记录插入失败，合同信息修改失败","");
+                return "修改记录插入失败，合同信息修改失败";
             }
             else if (!saveOrUpdate(payPlanTemp)) {
-                return new Result("500","合同信息修改失败","");
+                return "合同信息修改失败";
             }
-            else return new Result("200","","");
+            else return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Result payPlanHistory() {
+    public Object payPlanHistory() {
         try {
             List<PayplanHistory> data = payPlanMapper.selectPayPlanHistory();
-            if(data.size()!=0) return new Result("200","",data);
-            else return new Result("204","未查询到符合条件的数据","");
+            if(data.size()!=0) return data;
+            else return "未查询到符合条件的数据";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Result payPlanPick(PayPlanPickVO payPlanPickVO) {
+    public Object payPlanPick(PayPlanPickVO payPlanPickVO) {
         if(payPlanPickVO.getScale().equals("全部") && payPlanPickVO.getStatus().equals("全部")){
             try {
                 List<PayPlan> data = payPlanMapper.PayPlanSelectAllAll();
-                if(data.size()!=0) return new Result("200","",data);
-                else return new Result("204","未查询到符合条件的数据","");
+                if(data.size()!=0) return data;
+                else return "未查询到符合条件的数据";
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -106,8 +107,8 @@ public class PayPlanServiceImpl extends ServiceImpl<PayPlanMapper, PayPlan> impl
         else if(payPlanPickVO.getScale().equals("全部")&& payPlanPickVO.getStatus().equals("即将逾期")){
             try {
                 List<PayPlan> data = payPlanMapper.PayPlanSelectAllAbout(new Date(System.currentTimeMillis()));
-                if(data.size()!=0) return new Result("200","",data);
-                else return new Result("204","未查询到符合条件的数据","");
+                if(data.size()!=0) return data;
+                else return "未查询到符合条件的数据";
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -115,8 +116,8 @@ public class PayPlanServiceImpl extends ServiceImpl<PayPlanMapper, PayPlan> impl
         else if(payPlanPickVO.getScale().equals("全部") && payPlanPickVO.getStatus().equals("已逾期")){
             try {
                 List<PayPlan> data = payPlanMapper.PayPlanSelectAllLate(new BigDecimal("0"));
-                if(data.size()!=0) return new Result("200","",data);
-                else return new Result("204","未查询到符合条件的数据","");
+                if(data.size()!=0) return data;
+                else return "未查询到符合条件的数据";
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -124,8 +125,8 @@ public class PayPlanServiceImpl extends ServiceImpl<PayPlanMapper, PayPlan> impl
         else if(payPlanPickVO.getScale().equals("与我相关") && payPlanPickVO.getStatus().equals("全部")){
             try {
                 List<PayPlan> data = payPlanMapper.PayPlanSelectSingleAll(payPlanPickVO.getEmployeeNo());
-                if(data.size()!=0) return new Result("200","",data);
-                else return new Result("204","未查询到符合条件的数据","");
+                if(data.size()!=0) return data;
+                else return "未查询到符合条件的数据";
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -133,8 +134,8 @@ public class PayPlanServiceImpl extends ServiceImpl<PayPlanMapper, PayPlan> impl
         else if(payPlanPickVO.getScale().equals("与我相关") && payPlanPickVO.getStatus().equals("即将逾期")){
             try {
                 List<PayPlan> data = payPlanMapper.PayPlanSelectSingleAbout(payPlanPickVO.getEmployeeNo(),new Date(System.currentTimeMillis()));
-                if(data.size()!=0) return new Result("200","",data);
-                else return new Result("204","未查询到符合条件的数据","");
+                if(data.size()!=0) return data;
+                else return "未查询到符合条件的数据";
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -142,13 +143,13 @@ public class PayPlanServiceImpl extends ServiceImpl<PayPlanMapper, PayPlan> impl
         else if(payPlanPickVO.getScale().equals("与我相关") && payPlanPickVO.getStatus().equals("已逾期")){
             try {
                 List<PayPlan> data = payPlanMapper.PayPlanSelectSingleLate(payPlanPickVO.getEmployeeNo(),new BigDecimal("0"));
-                if(data.size()!=0) return new Result("200","",data);
-                else return new Result("204","未查询到符合条件的数据","");
+                if(data.size()!=0) return data;
+                else return "未查询到符合条件的数据";
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        else return new Result("415","所输入条件表述有误,查询失败","");
+        else return "所输入条件表述有误,查询失败";
     }
 
     @Override

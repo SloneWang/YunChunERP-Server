@@ -1,12 +1,15 @@
 package com.huang.controller;
 
 import com.huang.common.Result;
+import com.huang.entity.CustomerInformation;
+import com.huang.service.CustomerInformationServiceImpl;
 import com.huang.service.SalesmanServiceImpl;
 import com.huang.vo.SaveContractVO;
 import com.huang.vo.UpdateContractVO;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+import cn.hutool.json.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -16,43 +19,53 @@ import javax.servlet.http.HttpServletResponse;
 public class SalesmanController {
     @Resource
     SalesmanServiceImpl salesmanService;
+    @Resource
+    CustomerInformationServiceImpl customerInformationService;
 
     @GetMapping("/simpleContractSelect")
     //List<ContractSimpleDTO>
-    public Result simpleContractSelect (){
+    public Object simpleContractSelect (){
         return salesmanService.contractSimp();
     }
 
     @GetMapping("/selectContract/{id}")
-    //Contract
-    public Result selectContractById(HttpServletResponse response,@PathVariable Integer id){
+    //ContractDTO
+    public Object selectContractById(HttpServletResponse response,@PathVariable Integer id){
         return salesmanService.contract(response,id);
     }
 
     @GetMapping("/productInformation")
     //List<ProductInformation>
-    public Result selectProductInformation(){
+    public Object selectProductInformation(){
         return salesmanService.productInformation();
     }
 
     @PostMapping("/saveContract")
-    public Result saveContract(@RequestParam("file") CommonsMultipartFile file, @RequestBody SaveContractVO saveContractVO){
+    public Object saveContract(@RequestParam("file") MultipartFile file, SaveContractVO saveContractVO){
         return salesmanService.saveContract(file,saveContractVO);
     }
 
     @PostMapping("/updateContract")
-    public Result updateContract(@RequestParam("file") CommonsMultipartFile file, @RequestBody UpdateContractVO updateContractVO){
-        return salesmanService.updateContract(file,updateContractVO);
+    public Object updateContract(@RequestParam("file") MultipartFile file, @RequestParam("contract") String updateContractVO){
+        return salesmanService.updateContract(file, JSONUtil.toBean(updateContractVO, UpdateContractVO.class));
     }
 
     @GetMapping("/contractHistory")
     //List<ContractHistory>
-    public Result contractHistory(){
+    public Object contractHistory(){
         return salesmanService.contractHistory();
     }
 
     @DeleteMapping ("/deleteContract/{id}/{employeeNo}")
-    public Result deleteContract(@PathVariable Integer id,@PathVariable String employeeNo){
+    public Object deleteContract(@PathVariable Integer id,@PathVariable String employeeNo){
         return salesmanService.deleteContract(id,employeeNo);
+    }
+    @GetMapping("/selectCustomer")
+    public Object selectCustomer(){
+        return customerInformationService.selectAllCustomer();
+    }
+    @PostMapping("/saveCustomerInformation")
+    public Object saveCustomerInformation(@RequestBody CustomerInformation customerInformation){
+        return customerInformationService.saveOrUpdateCustomer(customerInformation);
     }
 }

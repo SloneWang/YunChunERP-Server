@@ -8,17 +8,13 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-@TableName(value = "product_information")
-public class ProductInformation {
+@TableName(value = "contract_product")
+public class ContractProduct  {
     @TableId(type = IdType.AUTO)
-    //主键
     private Integer id;
-    //产品编号
     private String productNo;
-    //产品类型
-    private String productType;
-    //单价
-    private BigDecimal price;
-    //备注信息
-    private String Notes;
+    private BigDecimal productNumber;
+    private String contractNo;
+    private Integer tag;
 }
+

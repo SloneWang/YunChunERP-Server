@@ -45,6 +45,32 @@ INSERT INTO `contract_history` VALUES (1,'XS2302160001','2023-02-16 02:37:47',NU
 UNLOCK TABLES;
 
 --
+-- Table structure for table `contract_product`
+--
+
+DROP TABLE IF EXISTS `contract_product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `contract_product` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `product_no` varchar(50) DEFAULT NULL COMMENT '产品编号',
+  `product_number` decimal(8,2) DEFAULT NULL COMMENT '产品数量',
+  `contract_no` varchar(50) DEFAULT NULL COMMENT '合同编号',
+  `tag` int DEFAULT '0' COMMENT '是否生效',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `contract_product`
+--
+
+LOCK TABLES `contract_product` WRITE;
+/*!40000 ALTER TABLE `contract_product` DISABLE KEYS */;
+/*!40000 ALTER TABLE `contract_product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `controlmodule`
 --
 
@@ -122,7 +148,7 @@ DROP TABLE IF EXISTS `customer_information`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer_information` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `contract_number` varchar(50) DEFAULT NULL COMMENT '合同编号',
+  `member_no` varchar(20) DEFAULT NULL COMMENT '会员号码',
   `customer_name` varchar(50) DEFAULT NULL COMMENT '客户姓名',
   `customer_phone` varchar(50) DEFAULT NULL COMMENT '客户电话',
   `customer_name2` varchar(50) DEFAULT NULL COMMENT '客户姓名2',
@@ -131,9 +157,8 @@ CREATE TABLE `customer_information` (
   `industry` varchar(50) DEFAULT NULL COMMENT '所属行业',
   `customer_job` varchar(50) DEFAULT NULL COMMENT '客户职务',
   `channel` varchar(50) DEFAULT NULL COMMENT '渠道来源',
-  `address` varchar(50) DEFAULT NULL COMMENT '客户地址',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,7 +167,7 @@ CREATE TABLE `customer_information` (
 
 LOCK TABLES `customer_information` WRITE;
 /*!40000 ALTER TABLE `customer_information` DISABLE KEYS */;
-INSERT INTO `customer_information` VALUES (3,'XS2302160001','石永明','17744426066','王红伟','15562673348','河北造船厂','船舶制造','市场部经理','熟人推荐','河北省张家口市三里屯县五河小区3号楼3单元4楼'),(4,'XS2302160002','李汉','15544426066','李阳','11262673348','天津钢铁厂','钢铁生产','业务员','微信公众号','天津市和平区窝窝乡三笠小区3号楼3单元4楼'),(5,'XS2302160002','李汉','15544426066','李阳','11262673348','天津钢铁厂','钢铁生产','业务员','微信公众号','天津市和平区窝窝乡三笠小区3号楼3单元4楼'),(6,'XS2302160002','李汉','15544426066','李阳','11262673348','天津钢铁厂','钢铁生产','业务员','微信公众号','天津市和平区窝窝乡三笠小区3号楼3单元4楼');
+INSERT INTO `customer_information` VALUES (7,'00000001','李汉','15544426066','李阳','11262673348','天津钢铁厂','钢铁生产','业务员','微信公众号'),(8,'00000002','网三','13344426066','王五','18862673348','北京钢铁厂','货物运输','经理','qq公众号');
 /*!40000 ALTER TABLE `customer_information` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -531,7 +556,7 @@ DROP TABLE IF EXISTS `pay_plan`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pay_plan` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `contract_number` varchar(50) DEFAULT NULL COMMENT '合同编号',
+  `contract_no` varchar(50) DEFAULT NULL COMMENT '合同编号',
   `pay_cycle` int DEFAULT NULL COMMENT '付款周期',
   `pay_status` varchar(50) DEFAULT NULL COMMENT '完成状态',
   `pay_date` date DEFAULT NULL COMMENT '本次付款截止时间',
@@ -541,14 +566,14 @@ CREATE TABLE `pay_plan` (
   `late_times` int DEFAULT NULL COMMENT '逾期次数',
   `amount_not_paid` decimal(11,2) DEFAULT NULL COMMENT '剩余待付金额',
   `employee_no` varchar(50) DEFAULT NULL COMMENT '负责员工编号',
-  `employee_name` varchar(50) DEFAULT NULL COMMENT '负责员工姓名',
   `amount_plan` decimal(10,2) DEFAULT NULL COMMENT '计划付款金额',
   `pay_create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `tag` int DEFAULT '0' COMMENT '是否生效',
   PRIMARY KEY (`id`),
   KEY `PAYORNOT` (`pay_status`),
   KEY `PAYDATE` (`pay_date`),
   KEY `PAYAMOUNT` (`amount_not_paid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -557,7 +582,7 @@ CREATE TABLE `pay_plan` (
 
 LOCK TABLES `pay_plan` WRITE;
 /*!40000 ALTER TABLE `pay_plan` DISABLE KEYS */;
-INSERT INTO `pay_plan` VALUES (5,'XS2302160001',6,'未缴费','2023-02-16',0.00,0.00,300.00,0,4300.50,'1993362493','吴玉青',300.00,'2023-02-16 00:00:00'),(8,'XS2302160002',1,'未逾期','2023-02-16',0.00,0.00,400.00,0,6600.00,'55555','王天乐',400.00,'2023-02-16 00:00:00');
+INSERT INTO `pay_plan` VALUES (11,'XS2302160002',6,'未逾期','2023-03-17',0.00,0.00,400.00,0,21600.00,'55555',400.00,'2023-03-17 00:00:00',1),(12,'XS2302161213',5,'未逾期','2023-03-17',0.00,0.00,300.00,0,12300.00,'55555',300.00,'2023-03-17 00:00:00',1);
 /*!40000 ALTER TABLE `pay_plan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -597,10 +622,9 @@ DROP TABLE IF EXISTS `product_information`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `product_information` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `product_no` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '产品编号',
-  `product_type` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '产品类型',
-  `product_able` tinyint(1) DEFAULT NULL COMMENT '能否生产',
-  `price` decimal(8,2) DEFAULT NULL COMMENT '价格',
+  `product_no` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '产品规格',
+  `product_type` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '产品名称',
+  `price` decimal(8,2) DEFAULT NULL COMMENT '成本',
   `notes` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '注释',
   PRIMARY KEY (`id`),
   KEY `PRODUCTTYPE` (`product_type`)
@@ -613,8 +637,39 @@ CREATE TABLE `product_information` (
 
 LOCK TABLES `product_information` WRITE;
 /*!40000 ALTER TABLE `product_information` DISABLE KEYS */;
-INSERT INTO `product_information` VALUES (1,'DNGL10086A','电能锅炉10086A',1,3000.00,'无'),(2,'ZQGL12138B','蒸汽锅炉12138B',1,50000.00,'无'),(3,'RMGL56523A','燃煤锅炉56523A',1,4000.00,'无'),(4,'SWZGL23125C','生物质锅炉SWZGL23125C',1,60000.00,'无');
+INSERT INTO `product_information` VALUES (1,'DNGL10086A','电能锅炉10086A',3000.00,'无'),(2,'ZQGL12138B','蒸汽锅炉12138B',5000.00,'无'),(3,'RMGL56523A','燃煤锅炉56523A',4000.00,'无'),(4,'SWZGL23125C','生物质锅炉SWZGL23125C',60000.00,'无');
 /*!40000 ALTER TABLE `product_information` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `review_request`
+--
+
+DROP TABLE IF EXISTS `review_request`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `review_request` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `review_type` varchar(20) DEFAULT NULL COMMENT '审核类型',
+  `employee_no` varchar(20) DEFAULT NULL COMMENT '申请人编号',
+  `remark` varchar(500) DEFAULT NULL COMMENT '申请信息',
+  `request_date` datetime DEFAULT NULL COMMENT '申请时间',
+  `reviewer_no` varchar(20) DEFAULT NULL COMMENT '审核人编号',
+  `review_result` varchar(5) DEFAULT NULL COMMENT '审核结果',
+  `review_date` datetime DEFAULT NULL COMMENT '审核时间',
+  `index_no` varchar(50) DEFAULT '0' COMMENT '修改索引',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `review_request`
+--
+
+LOCK TABLES `review_request` WRITE;
+/*!40000 ALTER TABLE `review_request` DISABLE KEYS */;
+INSERT INTO `review_request` VALUES (2,'创建新合同','55555','你好，李总，这是我和方老板签的合同，麻烦您通过一下','2023-03-17 10:04:58','wizard','审核通过','2023-03-17 10:55:51','XS2302160002'),(3,'创建新合同','55555','大合同，请检阅','2023-03-17 10:14:29','wizard','审核通过','2023-03-17 10:58:09','XS2302161213'),(4,'创建新合同','wizard','客户非常着急，请尽快批复','2023-03-17 11:20:11','wizard','审核未通过','2023-03-17 11:21:30','XL2302161213'),(5,'创建新合同','wizard','客户非常着急，请尽快批复','2023-03-17 11:29:05','wizard','审核未通过','2023-03-17 11:30:44','XL2302161213');
+/*!40000 ALTER TABLE `review_request` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -626,37 +681,22 @@ DROP TABLE IF EXISTS `salesman_contract`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `salesman_contract` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `contract_number` varchar(50) NOT NULL COMMENT '合同号',
+  `member_no` varchar(10) DEFAULT NULL COMMENT '会员编号',
+  `contract_no` varchar(50) NOT NULL COMMENT '合同号',
   `sign_date` date DEFAULT NULL COMMENT '签约日期',
   `invoice_type` varchar(10) DEFAULT NULL COMMENT '发票类型',
   `employee_no` varchar(50) DEFAULT NULL COMMENT '创建员工编号',
-  `employee_name` varchar(10) DEFAULT NULL COMMENT '创建员工姓名',
   `reviewer_no` varchar(50) DEFAULT NULL COMMENT '审核人编号',
-  `reviewer_name` varchar(10) DEFAULT NULL COMMENT '审核人姓名',
-  `reviewer_comment` varchar(300) DEFAULT NULL COMMENT '审批意见(300字内)',
-  `customer_company` varchar(50) DEFAULT NULL COMMENT '客户所属公司',
-  `customer_name` varchar(10) DEFAULT NULL COMMENT '客户姓名',
-  `customer_phonenum` varchar(11) DEFAULT NULL COMMENT '客户电话',
-  `sec_customer_name` varchar(10) DEFAULT NULL COMMENT '第二联系人姓名',
-  `sec_customer_phonenum` varchar(11) DEFAULT NULL COMMENT '第二联系人电话',
   `contract_lifecycle` varchar(10) DEFAULT NULL COMMENT '合同生命周期',
   `estimated_install_date` date DEFAULT NULL COMMENT '预计安装完成日期',
   `install_date` date DEFAULT NULL COMMENT '实际安装完成日期',
   `install_address` varchar(50) DEFAULT NULL COMMENT '安装地址',
-  `contract_document` varchar(100) DEFAULT NULL COMMENT '合同文件',
-  `subitem_profit` decimal(10,2) DEFAULT NULL COMMENT '合同利润',
-  `subitem_profit_rate` double DEFAULT NULL COMMENT '利润率',
-  `delivery_fee` decimal(10,2) DEFAULT NULL COMMENT '发货金额',
-  `up_amount` decimal(10,2) DEFAULT NULL COMMENT '加价金额',
+  `contract_document` varchar(100) DEFAULT NULL COMMENT '合同文件地址',
   `delivery_method` varchar(2) DEFAULT NULL COMMENT '发货方式',
-  `product_number` int DEFAULT NULL COMMENT '产品数量',
-  `install_fee` decimal(10,2) DEFAULT NULL COMMENT '安装费用',
-  `product_no` varchar(20) DEFAULT NULL COMMENT '产品编号',
+  `tag` int DEFAULT '0' COMMENT '审核标志',
   PRIMARY KEY (`id`),
-  KEY `SIGNDATE` (`sign_date`),
-  KEY `CUSTOMERCOMPANY` (`customer_company`),
-  KEY `CUSTOMERNAME` (`customer_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+  KEY `SIGNDATE` (`sign_date`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -665,7 +705,7 @@ CREATE TABLE `salesman_contract` (
 
 LOCK TABLES `salesman_contract` WRITE;
 /*!40000 ALTER TABLE `salesman_contract` DISABLE KEYS */;
-INSERT INTO `salesman_contract` VALUES (8,'XS2302160001','2023-02-16','专用','15052382109','wuwuwu',NULL,NULL,NULL,'河北造船厂','石永明','17744426066','王红伟','15562673348','合同已签订',NULL,NULL,'河北省张家口市三里屯县五河小区3号楼3单元4楼',NULL,NULL,NULL,NULL,300.50,'送货',1,NULL,'RMGL56523A'),(11,'XS2302160002','2023-02-16','普通','55555','王天乐',NULL,NULL,NULL,'天津钢铁厂','李汉','15544426066','李阳','11262673348','合同已签订',NULL,NULL,'天津市和平区窝窝乡三笠小区3号楼3单元4楼',NULL,NULL,NULL,NULL,600.00,'自提',2,NULL,'DNGL10086A');
+INSERT INTO `salesman_contract` VALUES (13,'00000001','XS2302160002','2023-03-17','专用','55555','wizard','合同已签订',NULL,NULL,'天津市和平区窝窝乡三笠小区3号楼3单元4楼',NULL,'自提',1),(14,'00000002','XS2302161213','2023-03-17','普通','55555','wizard','合同已签订',NULL,NULL,'北京市海淀区窝窝乡三笠小区3号楼3单元4楼',NULL,'自提',1);
 /*!40000 ALTER TABLE `salesman_contract` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -794,7 +834,7 @@ CREATE TABLE `sys_user` (
   `position` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '职位',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `username` (`username`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -859,4 +899,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-03 14:38:03
+-- Dump completed on 2023-03-19 14:00:41

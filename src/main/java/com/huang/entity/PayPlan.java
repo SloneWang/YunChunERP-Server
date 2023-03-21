@@ -16,7 +16,7 @@ public class PayPlan {
     //主键
     private Integer id;
     //与该回款计划关联的合同编号
-    private String contractNumber;
+    private String contractNo;
     //回款状态
     private String payStatus;
     //本次付款截止日期
@@ -33,8 +33,6 @@ public class PayPlan {
     private BigDecimal amountNotPaid;
     //负责员工编号
     private String employeeNo;
-    //负责员工姓名
-    private String employeeName;
     //创建日期
     private Date payCreateDate;
     //付款周期(月)

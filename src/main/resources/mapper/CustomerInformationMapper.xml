@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.mapper.CustomerInformationMapper">
+
+    <select id="selectOneCustomer" resultType="com.huang.entity.CustomerInformation">
+        select *
+        from yunchun.customer_information
+        where member_no=#{memberNo};
+    </select>
+
+
+</mapper>

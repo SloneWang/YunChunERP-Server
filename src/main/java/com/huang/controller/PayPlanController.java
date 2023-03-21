@@ -16,24 +16,24 @@ public class PayPlanController {
 
     @GetMapping("/selectPayPlan/{id}")
     //PayPlan
-    public Result selectOnePayPlan(@PathVariable Integer id){
+    public Object selectOnePayPlan(@PathVariable Integer id){
         return payPlanService.selectPayPlan(id);
     }
 
     @PostMapping("/updatePayPlan")
-    public Result updatePayPlan(@RequestBody UpdatePayPlanVO updatePayPlanVO){
+    public Object updatePayPlan(@RequestBody UpdatePayPlanVO updatePayPlanVO){
         return payPlanService.updatePayPlan(updatePayPlanVO);
     }
 
     @GetMapping("/PayPlanHistory")
     //List<PayplanHistory>
-    public Result selectPayPlanHistory(){
+    public Object selectPayPlanHistory(){
         return payPlanService.payPlanHistory();
     }
 
     @PostMapping("/PayPlanPick")
     //List<PayPlan>
-    public Result PayPlanPick(@RequestBody PayPlanPickVO payPlanPickVO){
+    public Object PayPlanPick(@RequestBody PayPlanPickVO payPlanPickVO){
         return payPlanService.payPlanPick(payPlanPickVO);
     }
 }

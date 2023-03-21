@@ -8,7 +8,7 @@ import com.huang.entity.ContractHistory;
 import com.huang.entity.ProductInformation;
 import com.huang.vo.SaveContractVO;
 import com.huang.vo.UpdateContractVO;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -16,14 +16,14 @@ import java.util.List;
 
 public interface SalesmanService extends IService<Contract> {
     //List<ContractSimpleDTO>
-    Result contractSimp();
+    Object contractSimp();
     //Contract
-    Result contract(HttpServletResponse response,Integer id);
+    Object contract(HttpServletResponse response,Integer id);
     //List<ProductInformation>
-    Result productInformation();
-    Result saveContract(CommonsMultipartFile file,SaveContractVO saveData) throws IOException;
-    Result updateContract(CommonsMultipartFile file,UpdateContractVO updateData);
+    Object productInformation();
+    Object saveContract(MultipartFile file,SaveContractVO saveData) throws IOException;
+    Object updateContract(MultipartFile file,UpdateContractVO updateData);
     //List<ContractHistory>
-    Result contractHistory();
-    Result deleteContract(Integer id,String employeeNo);
+    Object contractHistory();
+    Object deleteContract(Integer id,String employeeNo);
 }

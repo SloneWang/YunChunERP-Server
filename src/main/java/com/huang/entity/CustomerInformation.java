@@ -13,7 +13,7 @@ public class CustomerInformation {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String contractNumber;
+    private String memberNo;
     private String customerName;
     private String customerName2;
     private String customerPhone;
@@ -22,5 +22,4 @@ public class CustomerInformation {
     private String industry;
     private String customerJob;
     private String channel;
-    private String address;
 }

@@ -12,12 +12,12 @@ import java.util.List;
 public interface PayPlanService extends IService<PayPlan> {
     boolean savePayPlan(PayPlan payPlan);
     //PayPlan
-    Result selectPayPlan(Integer id);
-    Result updatePayPlan(UpdatePayPlanVO payPlanData);
+    Object selectPayPlan(Integer id);
+    Object updatePayPlan(UpdatePayPlanVO payPlanData);
     //List<PayplanHistory>
-    Result payPlanHistory();
+    Object payPlanHistory();
     //List<PayPlan>
-    Result payPlanPick(PayPlanPickVO payPlanPickVO);
+    Object payPlanPick(PayPlanPickVO payPlanPickVO);
     void updateData();
 
 }

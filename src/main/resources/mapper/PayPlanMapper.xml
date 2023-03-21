@@ -7,7 +7,7 @@
     <select id="selectOnePayPlan" resultType="com.huang.entity.PayPlan">
         select *
         from yunchun.pay_plan
-        where contract_number=#{contractNumber};
+        where contract_no=#{contractNumber};
     </select>
     <select id="selectPayPlanById" resultType="com.huang.entity.PayPlan">
         select *

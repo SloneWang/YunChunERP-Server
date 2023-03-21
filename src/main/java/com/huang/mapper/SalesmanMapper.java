@@ -22,6 +22,8 @@ public interface SalesmanMapper extends BaseMapper<Contract> {
      Boolean deleteByContractNumber(String contractNumber);
      boolean insertContractHistory(ContractHistory contractHistory);
      boolean deletePayPlanByContractNumber(String contractNumber);
-     List <CustomerInformation> selectCustomerInformationByContractNo(String contractNumber);
      List<Contract> selectContractByContactNo(String contractNumber);
+     boolean insertContractProduct(ContractProduct contractProduct);
+     List<Contract> selectAllContract();
+     List<ContractProduct> selectContractProductByContractNo(String ContractNo);
 }

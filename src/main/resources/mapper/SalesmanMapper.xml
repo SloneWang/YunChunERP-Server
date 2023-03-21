@@ -30,7 +30,7 @@
     </select>
     <delete id="deleteByContractNumber">
         delete from yunchun.salesman_contract
-        where contract_number=#{contractNumber};
+        where contract_no=#{contractNumber};
     </delete>
     <insert id="insertContractHistory" parameterType="com.huang.entity.ContractHistory" >
         insert into yunchun.contract_history(contract_no,modify_time,modify_by,review_by)
@@ -38,16 +38,26 @@
     </insert>
     <delete id="deletePayPlanByContractNumber">
         delete from yunchun.pay_plan
-        where contract_number=#{contractNumber};
+        where contract_no=#{contractNumber};
     </delete>
-    <select id="selectCustomerInformationByContractNo" resultType="com.huang.entity.CustomerInformation">
-        select *
-        from yunchun.customer_information
-        where contract_number=#{contractNumber};
-    </select>
     <select id="selectContractByContactNo" resultType="com.huang.entity.Contract">
         select *
         from yunchun.salesman_contract
-        where contract_number=#{contractNumber};
+        where contract_no=#{contractNumber};
     </select>
+    <insert id="insertContractProduct" parameterType="com.huang.entity.ContractProduct" >
+        insert into yunchun.contract_product(contract_no,product_no,product_number)
+        VALUES(#{contractNo},#{productNo},#{productNumber});
+    </insert>
+    <select id="selectAllContract" resultType="com.huang.entity.Contract">
+        select *
+        from yunchun.salesman_contract
+        where tag=1;
+    </select>
+    <select id="selectContractProductByContractNo" resultType="com.huang.entity.ContractProduct">
+        select *
+        from yunchun.contract_product
+        where tag=1 and contract_no=#{contractNo};
+    </select>
+
 </mapper>
