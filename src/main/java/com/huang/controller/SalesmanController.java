@@ -41,8 +41,8 @@ public class SalesmanController {
     }
 
     @PostMapping("/saveContract")
-    public Object saveContract(@RequestParam("file") MultipartFile file, SaveContractVO saveContractVO){
-        return salesmanService.saveContract(file,saveContractVO);
+    public Object saveContract(@RequestParam("file") MultipartFile file, @RequestParam("contract") String saveContractVO){
+        return salesmanService.saveContract(file,JSONUtil.toBean(saveContractVO, SaveContractVO.class));
     }
 
     @PostMapping("/updateContract")

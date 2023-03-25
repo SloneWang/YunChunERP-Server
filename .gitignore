@@ -1,5 +1,6 @@
 .git/
 .idea/
 .vscode/
+ContractDocuments/
 target/
 src/main/resources/application.yml
