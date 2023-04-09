@@ -22,4 +22,5 @@ public class CustomerInformation {
     private String industry;
     private String customerJob;
     private String channel;
+    private Integer tag;
 }

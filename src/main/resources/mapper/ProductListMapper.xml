@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.mapper.ProductListMapper">
+
+    <select id="selectProductListByContractId" resultType="com.huang.entity.ProductList">
+        select *
+        from yunchun.product_list
+        where contract_id=#{contractId};
+    </select>
+
+    <delete id="deleteProductListByContractId">
+        delete from yunchun.product_list
+        where contract_id=#{contractId};
+    </delete>
+
+    <select id="selectProductListByProductId" resultType="com.huang.entity.ProductList">
+        select *
+        from yunchun.product_list
+        where product_id=#{productId};
+    </select>
+
+</mapper>

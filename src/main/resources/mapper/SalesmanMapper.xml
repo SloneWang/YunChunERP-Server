@@ -21,7 +21,7 @@
     </select>
     <select id="selectContractById" resultType="com.huang.entity.Contract">
         select *
-        from yunchun.salesman_contract
+        from yunchun.contract_information
         where id=#{id};
     </select>
     <select id="selectContractHistory" resultType="com.huang.entity.ContractHistory">
@@ -29,35 +29,26 @@
         from yunchun.contract_history
     </select>
     <delete id="deleteByContractNumber">
-        delete from yunchun.salesman_contract
+        delete from yunchun.contract_information
         where contract_no=#{contractNumber};
     </delete>
-    <insert id="insertContractHistory" parameterType="com.huang.entity.ContractHistory" >
-        insert into yunchun.contract_history(contract_no,modify_time,modify_by,review_by)
-        VALUES(#{contractNo},#{modifyTime},#{modifyBy},#{reviewBy});
-    </insert>
-    <delete id="deletePayPlanByContractNumber">
-        delete from yunchun.pay_plan
-        where contract_no=#{contractNumber};
-    </delete>
-    <select id="selectContractByContactNo" resultType="com.huang.entity.Contract">
-        select *
-        from yunchun.salesman_contract
-        where contract_no=#{contractNumber};
-    </select>
-    <insert id="insertContractProduct" parameterType="com.huang.entity.ContractProduct" >
-        insert into yunchun.contract_product(contract_no,product_no,product_number)
-        VALUES(#{contractNo},#{productNo},#{productNumber});
+    <insert id="insertContractHistory" parameterType="com.huang.entity.ContractHistory" useGeneratedKeys="true" keyProperty="id">
+        insert into yunchun.contract_history(contract_no,modify_time,modify_by,review_by,remark)
+        VALUES(#{contractNo},#{modifyTime},#{modifyBy},#{reviewBy},#{remark});
     </insert>
     <select id="selectAllContract" resultType="com.huang.entity.Contract">
         select *
-        from yunchun.salesman_contract
-        where tag=1;
+        from yunchun.contract_information
     </select>
-    <select id="selectContractProductByContractNo" resultType="com.huang.entity.ContractProduct">
+    <select id="selectContractInformationByEmployeeNo" resultType="com.huang.entity.Contract">
         select *
-        from yunchun.contract_product
-        where tag=1 and contract_no=#{contractNo};
+        from yunchun.contract_information
+        where employee_no=#{employeeNo};
     </select>
+    <select id="selectTaxRate" resultType="com.huang.entity.SysSettings">
+        select *
+        from yunchun.sys_settings
+    </select>
+
 
 </mapper>

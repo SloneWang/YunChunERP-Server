@@ -1,11 +1,14 @@
 package com.huang.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.huang.common.Result;
 import com.huang.dto.AllContractDTO;
 import com.huang.dto.ContractSimpleDTO;
+import com.huang.dto.ProductInformationDTO;
 import com.huang.entity.*;
 import com.huang.mapper.CustomerInformationMapper;
+import com.huang.mapper.MaterialListMapper;
+import com.huang.mapper.ProductListMapper;
 import com.huang.mapper.SalesmanMapper;
 import com.huang.vo.SaveContractVO;
 import com.huang.vo.UpdateContractVO;
@@ -29,21 +32,33 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
     @Autowired
     SalesmanMapper salesmanMapper;
     @Autowired
-    PayPlanServiceImpl payPlanServiceImpl;
-    @Autowired
     CustomerInformationServiceImpl customerInformationService;
     @Autowired
     CustomerInformationMapper customerInformationMapper;
     @Autowired
     ReviewRequestServiceImpl reviewRequestService;
+    @Autowired
+    ProductListServiceImpl productListService;
+    @Autowired
+    MaterialListServiceImpl materialListService;
+    @Autowired
+    ProductListMapper productListMapper;
+    @Autowired
+    MaterialListMapper materialListMapper;
+    @Autowired
+    MaterialInformationServiceImpl materialInformationService;
+    @Autowired
+    ProductInformationServiceImpl productInformationService;
     @Override
     @Transactional
-    public Object contractSimp() {
-
-        List<ContractSimpleDTO> contractSimpAll;
+    public Object contractSimp(String employeeNo) {
         try {
-            contractSimpAll = new ArrayList<>();
-            List<Contract> allContracts=salesmanMapper.selectAllContract();
+            List<Contract> allContracts= new ArrayList<>();
+            if(salesmanMapper.selectEmployeeInformation(employeeNo).get(0).getPosition().equals("销售员")){
+                allContracts=salesmanMapper.selectContractInformationByEmployeeNo(employeeNo);
+            }
+            else {allContracts=salesmanMapper.selectAllContract();}
+            List<ContractSimpleDTO> contractSimpAll=new ArrayList<>();
             for(Contract contra:allContracts){
                 ContractSimpleDTO conTemp=new ContractSimpleDTO();
                 conTemp.setId(contra.getId());
@@ -55,28 +70,91 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
                 conTemp.setSignDate(contra.getSignDate());
                 conTemp.setEmployeeName(salesmanMapper.selectEmployeeInformation(contra.getEmployeeNo()).get(0).getName());
                 conTemp.setContractLifecycle(contra.getContractLifecycle());
+                conTemp.setTag(contra.getTag());
                 contractSimpAll.add(conTemp);
             }
             return contractSimpAll;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
      }
 
+    @Override
+    public Object selectContractFile(HttpServletResponse response, Integer id) {
+        //查询id对应合同信息
+        try {
+            QueryWrapper<Contract> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id",id);
+            Contract contractSelect= getOne(queryWrapper);
+            String pathName=contractSelect.getContractDocument();
+            if(pathName!=null&&!pathName.equals("")){
+                InputStream is =null;
+                OutputStream os=null;
+                try {
+                    String fileName=pathName.substring(pathName.lastIndexOf("\\")+1);
+                    response.reset();
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("multipart/form-data");
+                    response.setHeader("Content-Disposition","attachment;fileName="+ URLEncoder.encode(fileName,"UTF-8"));
+                    File file=new File(pathName);
+                    is= Files.newInputStream(file.toPath());
+                    os=response.getOutputStream();
+                    byte[] buffer=new byte[1024];
+                    int index;
+                    while ((index=is.read(buffer))!=-1){
+                        os.write(buffer,0,index);
+                        os.flush();
+                    }
+                    return true;
+                } catch (IOException e) {
+                    throw new Exception("文件读取失败");
+                } finally {
+                    if (os != null) {
+                        os.close();
+                    }
+                    if (is != null) {
+                        is.close();
+                    }
+                }
+            }
+            else {throw new Exception("未找到对应合同文件");}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
      @Override
      @Transactional
-     public Object contract(HttpServletResponse response,Integer id){
+     public Object contract(Integer id){
          try {
              AllContractDTO allContractDTO=new AllContractDTO();
-             List<Contract> data = salesmanMapper.selectContractById(id);
-             if(data.size()!=0){
-                 Contract tempContract=data.get(0);
+             QueryWrapper<Contract> queryWrapper=new QueryWrapper<>();
+             queryWrapper.eq("id",id);
+             Contract tempContract = getOne(queryWrapper);
+             if(tempContract!=null){
                  allContractDTO.setId(id);
                  allContractDTO.setContractNumber(tempContract.getContractNo());
-                 allContractDTO.setSignDate(tempContract.getSignDate());
+                 allContractDTO.setMemberNo(tempContract.getMemberNo());
                  allContractDTO.setInvoiceType(tempContract.getInvoiceType());
+                 allContractDTO.setCreateEmployeeNo(tempContract.getCreateEmployeeNo());
+                 allContractDTO.setContractLifecycle(tempContract.getContractLifecycle());
+                 allContractDTO.setInstallAddress(tempContract.getInstallAddress());
+                 allContractDTO.setDeliveryMethod(tempContract.getDeliveryMethod());
                  allContractDTO.setEmployeeNo(tempContract.getEmployeeNo());
                  allContractDTO.setEmployeeName(salesmanMapper.selectEmployeeInformation(tempContract.getEmployeeNo()).get(0).getName());
+                 allContractDTO.setBalance(tempContract.getBalance());
+                 allContractDTO.setSignDate(tempContract.getSignDate());
+                 allContractDTO.setSignFee(tempContract.getSignFee());
+                 allContractDTO.setPickDate(tempContract.getPickDate());
+                 allContractDTO.setPickFee(tempContract.getPickFee());
+                 allContractDTO.setInstallDate(tempContract.getInstallDate());
+                 allContractDTO.setInstallFee(tempContract.getInstallFee());
+                 allContractDTO.setInstallCost(tempContract.getInstallCost());
+                 allContractDTO.setWarrantyPeriod(tempContract.getWarrantyPeriod());
+                 allContractDTO.setWarrantyFee(tempContract.getWarrantyFee());
+                 allContractDTO.setContractTax(tempContract.getContractTax());
+                 allContractDTO.setTag(tempContract.getTag());
                  allContractDTO.setReviewerNo(tempContract.getReviewerNo());
                  allContractDTO.setReviewerName(salesmanMapper.selectEmployeeInformation(tempContract.getReviewerNo()).get(0).getName());
                  CustomerInformation tempCustomerInformation=customerInformationMapper.selectOneCustomer(tempContract.getMemberNo()).get(0);
@@ -85,45 +163,34 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
                  allContractDTO.setCustomerPhonenum(tempCustomerInformation.getCustomerPhone());
                  allContractDTO.setSecCustomerName(tempCustomerInformation.getCustomerName2());
                  allContractDTO.setSecCustomerPhonenum(tempCustomerInformation.getCustomerPhone2());
-                 allContractDTO.setContractLifecycle(tempContract.getContractLifecycle());
-                 allContractDTO.setEstimatedInstallDate(tempContract.getEstimatedInstallDate());
-                 allContractDTO.setInstallDate(tempContract.getInstallDate());
-                 allContractDTO.setInstallAddress(tempContract.getInstallAddress());
-                 //合同利润率还没算
-                 allContractDTO.setDeliveryMethod(tempContract.getDeliveryMethod());
-                 allContractDTO.setContractProducts(salesmanMapper.selectContractProductByContractNo(tempContract.getContractNo()));
-                 String pathName=data.get(0).getContractDocument();
-                 if(pathName!=null&&!pathName.equals("")){
-                     InputStream is =null;
-                     OutputStream os=null;
-                     try {
-                         String fileName=pathName.substring(pathName.lastIndexOf("\\")+1);
-                         response.reset();
-                         response.setCharacterEncoding("UTF-8");
-                         response.setContentType("multipart/form-data");
-                         response.setHeader("Content-Disposition","attachment;fileName="+ URLEncoder.encode(fileName,"UTF-8"));
-                         File file=new File(pathName);
-                         is= Files.newInputStream(file.toPath());
-                         os=response.getOutputStream();
-                         byte[] buffer=new byte[1024];
-                         int index;
-                         while ((index=is.read(buffer))!=-1){
-                             os.write(buffer,0,index);
-                             os.flush();
-                         }
-                     } catch (IOException e) {
-                         throw new RuntimeException(e);
-                     } finally {
-                         if (os != null) {
-                             os.close();
-                         }
-                         if (is != null) {
-                             is.close();
-                         }
+                 allContractDTO.setIndustry(tempCustomerInformation.getIndustry());
+                 allContractDTO.setChannel(tempCustomerInformation.getChannel());
+                 allContractDTO.setCustomerJob(tempCustomerInformation.getCustomerJob());
+                 allContractDTO.setContractMaterial(materialListMapper.selectMaterialListByContractId(id));
+                 allContractDTO.setContractProduct(productListMapper.selectProductListByContractId(id));
+
+                 if(tempContract.getContractLifecycle().equals("合同已签订")){
+                     BigDecimal tempTotalGrossProfit=new BigDecimal("0");
+                     BigDecimal tempTotalNetProfit=new BigDecimal("0");
+                     for(MaterialList ma:allContractDTO.getContractMaterial()){
+                         MaterialInformation tempMaterialInformation=materialInformationService.selectMaterialInformationById(ma.getMaterialId());
+                         tempTotalGrossProfit=tempTotalGrossProfit.add(ma.getMaterialNumber().multiply(ma.getMaterialPrice().subtract(tempMaterialInformation.getUnitPrice())));
+                         tempTotalNetProfit=tempTotalNetProfit.add(ma.getMaterialNumber().multiply(ma.getMaterialPrice().subtract(tempMaterialInformation.getUnitPrice().add(tempMaterialInformation.getUnitPrice().multiply(tempMaterialInformation.getLowestAddRate())))));
                      }
+                     for(ProductList pro:allContractDTO.getContractProduct()){
+                         ProductInformationDTO productInformationDTO=productInformationService.selectProductInformationById(pro.getProductId());
+                         tempTotalGrossProfit=tempTotalGrossProfit.add(pro.getProductNumber().multiply(pro.getProductPrice().subtract(productInformationDTO.getProductPrice())));
+                         tempTotalNetProfit=tempTotalNetProfit.add(pro.getProductNumber().multiply(pro.getProductPrice().subtract(productInformationDTO.getProductPrice().add(productInformationDTO.getProductPrice().multiply(productInformationDTO.getLowestAddRate())))));
+                     }
+                     allContractDTO.setTotalNetProfit(tempTotalNetProfit);
+                     allContractDTO.setTotalGrossProfit(tempTotalGrossProfit);
                  }
-                 else {return data.get(0);}
-                 return data.get(0);
+                 else{
+                     allContractDTO.setTotalNetProfit(tempContract.getTotalNetProfit());
+                     allContractDTO.setTotalGrossProfit(tempContract.getTotalGrossProfit());
+                 }
+
+                 return allContractDTO;
              }
              else return "未查询到符合条件的数据";
          } catch (Exception e) {
@@ -131,15 +198,76 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
          }
     }
 
+
+
     @Override
     @Transactional
-     public Object productInformation(){
-
-        List<ProductInformation> data;
+    public Object saveContract(SaveContractVO saveData) {
+        //还需要合同编号重复性检查
         try {
-            data = salesmanMapper.selectProduct();
-            if(data.size()!=0) return data;
-              else return "未查询到符合条件的数据";
+            Contract contractTemp = new Contract();
+            contractTemp.setMemberNo(saveData.getMemberNo());
+            contractTemp.setInvoiceType(saveData.getInvoiceType());
+            //检测数据库里是否存在该用户
+            if(saveData.getEmployeeNo()!=null&&!saveData.getEmployeeNo().equals("")){
+                List<User> users=salesmanMapper.selectEmployeeInformation(saveData.getEmployeeNo());
+                if(users.size()!=0) {
+                    contractTemp.setCreateEmployeeNo(saveData.getEmployeeNo());
+                    contractTemp.setEmployeeNo(saveData.getEmployeeNo());
+                }
+                else {throw new Exception("无法找到对应编号的员工");}
+            }
+            else throw new Exception("员工编号缺失，创建合同失败");
+            contractTemp.setContractLifecycle("合同已签订");
+            contractTemp.setInstallAddress(saveData.getInstallAddress());
+            contractTemp.setDeliveryMethod(saveData.getDeliveryMethod());
+            contractTemp.setBalance(new BigDecimal("0"));
+            contractTemp.setSignDate(new Date(System.currentTimeMillis()));
+            contractTemp.setSignFee(saveData.getSignFee());
+            contractTemp.setPickFee(saveData.getPickFee());
+            contractTemp.setInstallFee(saveData.getInstallFee());
+            contractTemp.setWarrantyFee(saveData.getWarrantyFee());
+            contractTemp.setWarrantyPeriod(saveData.getWarrantyPeriod());
+            contractTemp.setContractTax(saveData.getContractTax());
+            contractTemp.setTag(2);
+            if (!saveOrUpdate(contractTemp)){
+                throw new Exception("保存合同信息失败");
+            }
+            //保存产品列表
+            for(ProductList pro:saveData.getContractProduct()){
+                ProductList tempPro=new ProductList();
+                tempPro.setProductId(pro.getProductId());
+                tempPro.setProductNumber(pro.getProductNumber());
+                tempPro.setContractId(contractTemp.getId());
+                tempPro.setProductPrice(pro.getProductPrice());
+                tempPro.setProjectStart(new Date(System.currentTimeMillis()));
+                if(!productListService.saveOrUpdate(tempPro)){
+                    throw new Exception("产品列表保存失败");
+                }
+            }
+            //保存材料列表
+            for(MaterialList ma:saveData.getContractMaterial()){
+                MaterialList tempMa=new MaterialList();
+                tempMa.setContractId(contractTemp.getId());
+                tempMa.setMaterialId(ma.getMaterialId());
+                tempMa.setMaterialNumber(ma.getMaterialNumber());
+                tempMa.setMaterialPrice(ma.getMaterialPrice());
+                if(!materialListService.saveOrUpdate(tempMa)){
+                    throw new Exception("材料列表保存失败");
+                }
+            }
+            //插入待审批信息
+            ReviewRequest reviewRequest =new ReviewRequest();
+            reviewRequest.setReviewType("创建新合同");
+            reviewRequest.setEmployeeNo(saveData.getEmployeeNo());
+            reviewRequest.setRemark(saveData.getRequestComment());
+            reviewRequest.setRequestDate(new java.util.Date(System.currentTimeMillis()));
+            reviewRequest.setAdditionalInformation("总基价："+saveData.getTotalBasePrice().toString()+"\n总售价："+saveData.getTotalSalePrice().toString()+"\n订金："+saveData.getSignFee()+"\n提货收款："+saveData.getPickFee()+"\n安装收款："+saveData.getInstallFee()+"\n质保收款："+saveData.getWarrantyFee()+"\n质保期："+saveData.getWarrantyPeriod().toString());
+            reviewRequest.setIndexNo(contractTemp.getId());
+            if (!reviewRequestService.saveOrUpdate(reviewRequest)){
+                throw new Exception("保存审批信息失败");
+            }
+            else return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -147,62 +275,28 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
 
     @Override
     @Transactional
-    public Object saveContract(MultipartFile file,SaveContractVO saveData) {
-        //还需要合同编号重复性检查
-        boolean saveDocumentFlag=false;
+    public Object saveOrUpdateContractFile(MultipartFile file, Integer id) throws IOException {
         try {
             Contract contractTemp = new Contract();
-            contractTemp.setContractNo(saveData.getContractNumber());
-            contractTemp.setSignDate(new Date(System.currentTimeMillis()));
-            contractTemp.setInvoiceType(saveData.getInvoiceType());
-            contractTemp.setMemberNo(saveData.getMemberNo());
-            if(saveData.getEmployeeNo()!=null&&!saveData.getEmployeeNo().equals("")){
-                List<User> users=salesmanMapper.selectEmployeeInformation(saveData.getEmployeeNo());
-                if(users.size()!=0) {
-                    contractTemp.setEmployeeNo(saveData.getEmployeeNo());
-                }
-                else {return "无法找到对应编号的员工";}
-            }
-            else return "员工编号缺失，创建合同失败";
-
-
-            contractTemp.setContractLifecycle("合同已签订");
-            contractTemp.setInstallAddress(saveData.getInstallAddress());
-            contractTemp.setDeliveryMethod(saveData.getDeliveryMethod());
-
-            //创建回款计划
-            PayPlan payPlan = new PayPlan();
-            payPlan.setPayCycle(saveData.getPayCycle());
-            payPlan.setPayDate(saveData.getPayDate());
-            payPlan.setContractNo(saveData.getContractNumber());
-            payPlan.setPayStatus("未逾期");
-            payPlan.setAmountPaid(new BigDecimal("0"));
-            payPlan.setBalance(new BigDecimal("0"));
-            payPlan.setAmountOnce(saveData.getAmountPlan());
-            payPlan.setAmountPlan(saveData.getAmountPlan());
-            payPlan.setLateTimes(0);
-            payPlan.setAmountNotPaid(saveData.getUpAmount());
-            for(ContractProduct pro:saveData.getContractProducts()){
-                payPlan.setAmountNotPaid(payPlan.getAmountNotPaid().add(pro.getProductNumber().multiply(salesmanMapper.selectOneProduct(pro.getProductNo()).get(0).getPrice())));
-                ContractProduct tempContractProduct=new ContractProduct();
-                tempContractProduct.setContractNo(saveData.getContractNumber());
-                tempContractProduct.setProductNo(pro.getProductNo());
-                tempContractProduct.setProductNumber(pro.getProductNumber());
-                tempContractProduct.setTag(0);
-                salesmanMapper.insertContractProduct(tempContractProduct);
-            }
-            payPlan.setEmployeeNo(saveData.getEmployeeNo());
-            payPlan.setPayCreateDate(new Date(System.currentTimeMillis()));
-
-            //合同文件导入
-            String uploadFileName = file.getOriginalFilename();
-
+            contractTemp.setId(id);
+            //创建文件夹路径
             File realPath = new File("ContractDocuments");
             if (!realPath.exists()) {
-                if (!realPath.mkdir()) return "未能成功创建合同存储文件夹";
+                if (!realPath.mkdir())  throw new Exception("未能成功创建文件夹");
             }
+            //查询id对应合同文件信息
+            QueryWrapper<Contract> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id",id);
+            String tempStr=getOne(queryWrapper).getContractDocument();
+            //如果原来存在路径就删除对应路径下文件
+            if(tempStr!=null&&!tempStr.equals("")){
+                if(!new File(tempStr).delete()){
+                    throw new Exception("未能成功成功删除原有文件");
+                }
+            }
+            //合同文件导入
+            String uploadFileName = file.getOriginalFilename();
             String RandomPath= UUID.randomUUID().toString().replace("-","");
-
             if(uploadFileName!=null&&!uploadFileName.equals("")){
                 OutputStream os = null;
                 InputStream is = null;
@@ -217,9 +311,8 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
                         os.flush();
                     }
                     contractTemp.setContractDocument(realPath+"\\\\"+RandomPath+lastName);
-                    saveDocumentFlag=true;
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new Exception("读写文件过程失败");
                 }finally {
                     if (os != null) {
                         os.close();
@@ -229,110 +322,82 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
                     }
                 }
             }
-
-            //插入待审批信息
-            ReviewRequest reviewRequest=new ReviewRequest();
-            reviewRequest.setIndexNo(saveData.getContractNumber());
-            reviewRequest.setRequestDate(new java.util.Date(System.currentTimeMillis()));
-            reviewRequest.setReviewType("创建新合同");
-            reviewRequest.setEmployeeNo(saveData.getEmployeeNo());
-            reviewRequest.setRemark(saveData.getRequestComment());
-            reviewRequestService.saveOrUpdate(reviewRequest);
-
-            if (!saveOrUpdate(contractTemp)){
-                if(contractTemp.getContractDocument()!=null&&!contractTemp.getContractDocument().equals(""))
-                {File file1=new File(contractTemp.getContractDocument());
-                    if(file1.exists()) file1.delete();}
-                return "合同信息保存失败";
+            if(!saveOrUpdate(contractTemp)){
+                throw new Exception("保存合同路径失败");
             }
-            else if (!payPlanServiceImpl.savePayPlan(payPlan)) {
-                if(contractTemp.getContractDocument()!=null&&!contractTemp.getContractDocument().equals(""))
-                {File file1=new File(contractTemp.getContractDocument());
-                    if(file1.exists()) file1.delete();}
-                salesmanMapper.deleteByContractNumber(contractTemp.getContractNo());
-                return "合同信息保存失败";
-            }
-            else if (!saveDocumentFlag) {
-                if(contractTemp.getContractDocument()!=null&&!contractTemp.getContractDocument().equals(""))
-                {File file1=new File(contractTemp.getContractDocument());
-                if(file1.exists()) file1.delete();}
-                return "合同信息保存成功，但合同文本保存失败";
-            }
-            else return true;
+            return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
     }
 
     @Override
     @Transactional
-    public Object updateContract(MultipartFile file,UpdateContractVO saveData) {
+    public Object updateContract(UpdateContractVO saveData) {
 
         try {
-            boolean saveDocumentFlag=false;
 
-            Contract contractTemp = new Contract();
-            contractTemp.setInvoiceType(saveData.getInvoiceType());
-            contractTemp.setId(saveData.getId());
-            Contract contractSelect= salesmanMapper.selectContractById(saveData.getId()).get(0);
-            contractTemp.setInstallAddress(saveData.getInstallAddress());
-            contractTemp.setDeliveryMethod(saveData.getDeliveryMethod());
-            contractTemp.setEstimatedInstallDate(saveData.getEstimatedInstallDate());
-            contractTemp.setInstallDate(saveData.getInstallDate());
-
-            //修改合同文本
-            String uploadFileName = file.getOriginalFilename();
-            if(uploadFileName!=null&&!uploadFileName.equals("")){
-                OutputStream os = null;
-                InputStream is = null;
-                try {
-                    if(new File(contractSelect.getContractDocument()).delete()){
-                        is = file.getInputStream();
-                        os = Files.newOutputStream(new File(contractSelect.getContractDocument()).toPath());
-                        int len;
-                        byte[] buffer = new byte[1024];
-                        while ((len = is.read(buffer)) != -1) {
-                            os.write(buffer, 0, len);
-                            os.flush();
-                        }
-                        saveDocumentFlag=true;
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }finally {
-                    if (os != null) {
-                        os.close();
-                    }
-                    if (is != null) {
-                        is.close();
-                    }
-                }
+            //如果tag不为1表示该合同不处于正常状态无法修改
+            QueryWrapper<Contract> queryWrapper = new QueryWrapper<Contract>()
+                    .eq("id",saveData.getId())
+                    .eq("tag",1);
+            List<Contract> contractSelects= list(queryWrapper);
+            if(contractSelects.size()==0){
+                throw new Exception("无法找到对应合同，或合同正在审核");
             }
-            else {saveDocumentFlag=true;}
+            Contract contractSelect=contractSelects.get(0);
+
+            //如果有另一条一样合同号的信息，表示该合同处于修改状态，必须审批结束才能修改
+            QueryWrapper<Contract> queryWrapper1 = new QueryWrapper<Contract>()
+                    .eq("contract_no",contractSelect.getContractNo())
+                    .eq("tag",0);
+            List<Contract> contractSelectTemp= list(queryWrapper1);
+            if(contractSelectTemp.size()!=0){
+                throw new Exception("审核中，无法执行修改操作");
+            }
 
             //留存记录
-            contractTemp.setContractNo(contractSelect.getContractNo());
             ContractHistory contractHistory = new ContractHistory();
             contractHistory.setModifyTime(new java.util.Date(System.currentTimeMillis()));
             contractHistory.setContractNo(contractSelect.getContractNo());
             contractHistory.setModifyBy(saveData.getModifyBy());
+            contractHistory.setRemark(saveData.getUpdateReason());
+
+            if(!salesmanMapper.insertContractHistory(contractHistory)){
+                throw new Exception("修改记录插入失败，合同信息修改失败");
+            }
+
+            Contract contractTemp = new Contract();
+            contractTemp.setContractNo(contractSelect.getContractNo());
+            contractTemp.setInvoiceType(saveData.getInvoiceType());
+            contractTemp.setInstallAddress(saveData.getInstallAddress());
+            contractTemp.setDeliveryMethod(saveData.getDeliveryMethod());
+            contractTemp.setEmployeeNo(saveData.getEmployeeNo());
+            contractTemp.setCreateEmployeeNo(contractHistory.getId().toString());
+            if(!contractSelect.getContractLifecycle().equals("安装完毕")&&!contractSelect.getContractLifecycle().equals("质保结束")&&!contractSelect.getContractLifecycle().equals("已结束")){
+                contractTemp.setWarrantyPeriod(saveData.getWarrantyPeriod());
+            }
+            if (!saveOrUpdate(contractTemp)) {
+                throw new Exception("合同信息保存失败");
+            }
+
+            //插入待审批信息
+            ReviewRequest reviewRequest =new ReviewRequest();
+            reviewRequest.setReviewType("修改合同信息");
+            reviewRequest.setEmployeeNo(saveData.getModifyBy());
+            reviewRequest.setRemark(saveData.getUpdateReason());
+            reviewRequest.setRequestDate(new java.util.Date(System.currentTimeMillis()));
+            reviewRequest.setAdditionalInformation(saveData.toString());
+            reviewRequest.setIndexNo(saveData.getId());
+            if (!reviewRequestService.saveOrUpdate(reviewRequest)){
+                throw new Exception("保存审批信息失败");
+            }
 
 
-            //重新计算利润率(不知道成本，目前没法算)
-//        if(contractSelect.getDeliveryFee()!=null&&contractSelect.getInstallFee()!=null){
-//        }
 
-            if (!saveDocumentFlag){
-                return "合同文本及信息修改失败";
-            }
-            else if(!salesmanMapper.insertContractHistory(contractHistory)){
-                return "修改记录插入失败，合同信息修改失败";
-            }
-            else if (!saveOrUpdate(contractTemp)) {
-                return "合同文本修改成功，但合同信息保存失败";
-            }
-            else return true;
-        } catch (IOException e) {
+            return true;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -352,30 +417,145 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
     public Object deleteContract(Integer id,String employeeNo) {
         try {
             List<Contract> contracts=salesmanMapper.selectContractById(id);
-            if(contracts.size()==0){return "不存在该合同";}
+            if(contracts.size()==0){
+                throw new Exception("合同不存在");
+            }
             Contract contractTemp=contracts.get(0);
+            //删除合同附件
+            if(contractTemp.getContractDocument()!=null&&!contractTemp.getContractDocument().equals("")) {
+                File file1=new File(contractTemp.getContractDocument());
+                if(file1.exists()){
+                    if(!file1.delete()){
+                        throw new Exception("合同文档删除失败");
+                    }
+                }
+            }
+
+            //删除相关材料列表和产品列表
+            if(!productListMapper.deleteProductListByContractId(id)){
+                throw new Exception("产品列表删除失败");
+            }
+            if(!materialListMapper.deleteMaterialListByContractId(id)){
+                throw new Exception("材料列表删除失败");
+            }
+
+            //删除合同信息
+            if(!removeById(id)){
+                throw new Exception("合同信息删除失败");
+            }
+
+            //插入删除记录
             ContractHistory contractHistory = new ContractHistory();
             contractHistory.setModifyTime(new java.util.Date(System.currentTimeMillis()));
             contractHistory.setContractNo(contractTemp.getContractNo());
             contractHistory.setModifyBy(employeeNo);
+            contractHistory.setRemark("合同删除操作");
+
             if(!salesmanMapper.insertContractHistory(contractHistory)){
-                return "修改记录插入失败，合同信息删除失败";
+                throw new Exception( "修改记录插入失败，合同信息删除失败");
             }
-            if(!salesmanMapper.deletePayPlanByContractNumber(contractTemp.getContractNo())) return "回款计划删除失败";
-            if(!removeById(id))return "合同信息删除失败";
-            if(contractTemp.getContractDocument()!=null&&!contractTemp.getContractDocument().equals("")) {
-                File file1=new File(contractTemp.getContractDocument());
-                if(file1.exists()){
-                    if(!file1.delete())return "合同文档删除失败";
-                }
-            }
-            else {return "合同文档无记录";}
+
+
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
+    public Object pickComplete(Integer id) {
+        try {
+            Contract tempContract = new Contract();
+            QueryWrapper<Contract> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id",id);
+            Contract contractSelect= getOne(queryWrapper);
+            if(contractSelect.getTag()==0){
+                throw new Exception("审核中，无法执行修改操作");
+            }
+            if(contractSelect.getContractLifecycle().equals("生产完毕")){
+                tempContract.setId(id);
+                tempContract.setContractLifecycle("提货完毕");
+                tempContract.setPickDate(new Date(System.currentTimeMillis()));
+                if(!saveOrUpdate(tempContract)){
+                    throw new Exception("合同更新失败");
+                }
+                return true;
+            }
+            else throw new Exception("无法跳过生产环节，请先完成生产项目");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //加入成本，加入时间，更新利润率，自动更新合同标签
+    @Override
+    public Object installComplete(Integer id,BigDecimal installCost) {
+        try {
+            Contract tempContract = new Contract();
+            QueryWrapper<Contract> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id",id);
+            Contract contractSelect= getOne(queryWrapper);
+            if(contractSelect.getTag()==0){
+                throw new Exception("审核中，无法执行修改操作");
+            }
+            if(contractSelect.getContractLifecycle().equals("提货完毕")){
+                tempContract.setId(id);
+                tempContract.setContractLifecycle("安装完毕");
+                tempContract.setInstallCost(installCost);
+                tempContract.setInstallDate(new Date(System.currentTimeMillis()));
+                tempContract.setTotalNetProfit(contractSelect.getTotalNetProfit().add(contractSelect.getInstallFee().subtract(installCost)));
+                tempContract.setTotalGrossProfit(contractSelect.getTotalGrossProfit().add(contractSelect.getInstallFee().subtract(installCost)));
+                if(!saveOrUpdate(tempContract)){
+                    throw new Exception("合同更新失败");
+                }
+                return true;
+            }
+            else throw new Exception("无法跳过提货环节，请先完成提货");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Object warrantyComplete(Integer id) {
+        try {
+            Contract tempContract = new Contract();
+            QueryWrapper<Contract> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("id",id);
+            Contract contractSelect= getOne(queryWrapper);
+            if(contractSelect.getTag()==0){
+                throw new Exception("审核中，无法执行修改操作");
+            }
+            if(contractSelect.getContractLifecycle().equals("质保结束")){
+                tempContract.setId(id);
+                tempContract.setContractLifecycle("已结束");
+                if(!saveOrUpdate(tempContract)){
+                    throw new Exception("合同更新失败");
+                }
+                return true;
+            }
+            else throw new Exception("无法跳过提货环节，请先完成提货");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public Contract selectUpdateContractInformation(Integer id) {
+        try {
+            QueryWrapper<Contract> queryWrapper=new QueryWrapper<Contract>()
+                    .eq("id",id);
+            Contract contractInformation =getOne(queryWrapper);
+            QueryWrapper<Contract> queryWrapper1=new QueryWrapper<Contract>()
+                    .eq("contract_no",contractInformation.getContractNo())
+                    .eq("tag",0);
+            return getOne(queryWrapper1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
 
 

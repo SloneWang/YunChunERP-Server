@@ -13,12 +13,22 @@ public class ProductInformation {
     @TableId(type = IdType.AUTO)
     //主键
     private Integer id;
+    //产品名称
+    private String productName;
     //产品编号
     private String productNo;
-    //产品类型
-    private String productType;
-    //单价
-    private BigDecimal price;
-    //备注信息
-    private String Notes;
+    //最低加价率
+    private BigDecimal lowestAddRate;
+    //共耗材料
+    private BigDecimal coConsumableMaterial;
+    //合体材料
+    private BigDecimal compositeMaterial;
+    //包砌人工
+    private BigDecimal masonryLabor;
+    //本体人工
+    private BigDecimal ontologyLabor;
+    //是否生效
+    private Integer tag;
+    //随机文件
+    private BigDecimal randomFiles;
 }

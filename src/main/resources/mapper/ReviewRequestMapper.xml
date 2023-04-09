@@ -15,21 +15,9 @@
         where id=#{id};
     </select>
 
-    <update id="setContractProduct" parameterType="com.huang.entity.ContractProduct">
-        update  yunchun.contract_product
-        set tag = 1
-        where tag=0 and contract_no=#{contractNo};
-    </update>
-
     <update id="setContract" parameterType="com.huang.entity.Contract">
         update  yunchun.salesman_contract
         set tag = 1,reviewer_no = #{reviewerNo}
-        where tag=0 and contract_no=#{contractNo};
-    </update>
-
-    <update id="setPayPlan" parameterType="com.huang.entity.PayPlan">
-        update  yunchun.pay_plan
-        set tag = 1
         where tag=0 and contract_no=#{contractNo};
     </update>
 
@@ -43,9 +31,16 @@
         where tag=0 and contract_no=#{contractNo};
     </delete>
 
-    <delete id="deletePayPlan">
-        delete from yunchun.pay_plan
-        where tag=0 and contract_no=#{contractNo};
-    </delete>
+    <update id="upDateContractHistory">
+        update  yunchun.contract_history
+        <set>
+            <if test="#{reviewBy}!=null">
+                review_by = #{reviewBy}
+            </if>
+        </set>
+        <where>
+            id= #{id}
+        </where>
+    </update>
 
 </mapper>

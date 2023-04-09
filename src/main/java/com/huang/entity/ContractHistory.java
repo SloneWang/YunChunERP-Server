@@ -21,4 +21,6 @@ public class ContractHistory {
     private String modifyBy;
     //审核人编号
     private String reviewBy;
+    //备注信息
+    private String remark;
 }

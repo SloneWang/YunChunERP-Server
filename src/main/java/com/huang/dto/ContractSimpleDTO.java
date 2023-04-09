@@ -22,4 +22,6 @@ public class ContractSimpleDTO {
     private String  employeeName;
     //合同生命周期
     private String  contractLifecycle;
+    //有效标志
+    private Integer tag;
 }

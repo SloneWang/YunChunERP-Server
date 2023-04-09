@@ -7,4 +7,5 @@ import com.huang.entity.CustomerInformation;
 public interface CustomerInformationService extends IService<CustomerInformation> {
     Object saveOrUpdateCustomer(CustomerInformation customerInformation);
     Object selectAllCustomer();
+    Object deleteCustomerByid(Integer id);
 }

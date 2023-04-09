@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -28,5 +29,7 @@ public class ReviewRequest {
     //申请日期
     private Date requestDate;
     //信息索引
-    private String indexNo;
+    private Integer indexNo;
+    //附加信息
+    private String additionalInformation;
 }
