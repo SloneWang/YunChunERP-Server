@@ -11,10 +11,9 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Component
-@ServerEndpoint("/ws/{username}/{role}/{token}")  // 接口路径 ws://localhost:8087/ws/{username}/{role}/{token}
+@ServerEndpoint("/ws/{username}/{role}/{token}")  // 接口路径 ws://ip:port/ws/{username}/{role}/{token}
 public class WebSocketComponent {
     //用户名
     private String username;
@@ -77,7 +76,7 @@ public class WebSocketComponent {
         });
     }
 
-    //通过用户民发送消息
+    //通过用户名发送消息
     public static void sendMessageToUserByUsername(String username, String message) {
         sessionPool.forEach(component -> {
             if (component.username.equals(username)) {
