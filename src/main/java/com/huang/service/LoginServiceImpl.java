@@ -68,7 +68,6 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
             List<Menu> roleMenus = getRoleMenus(roleId);
 
             userDTO.setMenus(roleMenus);
-
             return userDTO;
         }else {
             throw new ServiceException(Constants.CODE_600,"用户名或密码错误");
