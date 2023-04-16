@@ -34,7 +34,7 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
     private MenuServiceImpl menuService;
 
     @Override
-    public UserDTO login(UserDTO userDTO) {
+    public UserDTO login(UserDTO userDTO) throws Exception {
         //数据库查询的话，我们的对象必须要是对应的实体类
 //        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 //        queryWrapper.eq("username",userDTO.getUsername());
@@ -70,7 +70,7 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper, User> implements L
             userDTO.setMenus(roleMenus);
             return userDTO;
         }else {
-            throw new ServiceException(Constants.CODE_600,"用户名或密码错误");
+            throw new Exception("用户名或密码错误");
         }
 
     }

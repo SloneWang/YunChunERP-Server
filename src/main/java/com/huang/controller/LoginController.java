@@ -20,12 +20,12 @@ public class LoginController {
 
     //接受前端传输过来的账号密码并对其进行验证
     @PostMapping("/login")
-    public Object login(@RequestBody UserDTO userDTO){
+    public UserDTO login(@RequestBody UserDTO userDTO) throws Exception {
         String username = userDTO.getUsername();
         String password = userDTO.getPassword();
         //判断账户密码是否为空
         if(StrUtil.isBlank(username)||StrUtil.isBlank(password)){
-            return  "参数不足错误";
+            throw new Exception("参数不足错误");
         }
 
         UserDTO dto = loginService.login(userDTO);

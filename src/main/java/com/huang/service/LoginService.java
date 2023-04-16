@@ -5,7 +5,7 @@ import com.huang.dto.UserDTO;
 import com.huang.entity.User;
 
 public interface LoginService extends IService<User> {
-    public UserDTO login(UserDTO userDTO);
+    public UserDTO login(UserDTO userDTO) throws Exception;
 
 
     public User register(UserDTO userDTO);
