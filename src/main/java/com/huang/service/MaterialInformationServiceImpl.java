@@ -20,46 +20,37 @@ public class MaterialInformationServiceImpl extends ServiceImpl<MaterialInformat
     MaterialListMapper materialListMapper;
 
     @Override
-    public Object saveOrUpdateMaterialInformation(MaterialInformation materialInformation) {
-        try {
-            QueryWrapper<MaterialInformation> queryWrapper = new QueryWrapper<MaterialInformation>()
-                    .eq("material_name",materialInformation.getMaterialName())
-                    .eq("material_no",materialInformation.getMaterialNo())
-                    .eq("tag",0);
-            List<MaterialInformation> tempMaterialInformation=list(queryWrapper);
-            if(tempMaterialInformation.size()!=0){
-                if(!removeById(tempMaterialInformation.get(0).getId())){
-                    throw new Exception("删除原数据失败");
-                }
+    public boolean saveOrUpdateMaterialInformation(MaterialInformation materialInformation) throws Exception {
+        QueryWrapper<MaterialInformation> queryWrapper = new QueryWrapper<MaterialInformation>()
+                .eq("material_name",materialInformation.getMaterialName())
+                .eq("material_no",materialInformation.getMaterialNo())
+                .eq("tag",0);
+        List<MaterialInformation> tempMaterialInformation=list(queryWrapper);
+        if(tempMaterialInformation.size()!=0){
+            if(!removeById(tempMaterialInformation.get(0).getId())){
+                throw new Exception("删除原数据失败");
             }
-            if(!saveOrUpdate(materialInformation)){
-                throw new Exception("插入材料信息失败");
-            }
-            return true;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
-
+        if(!saveOrUpdate(materialInformation)){
+            throw new Exception("插入材料信息失败");
+        }
+        return true;
     }
 
     @Override
     @Transactional
-    public Object deleteMaterialInformationByid(Integer id) {
-        try {
-            MaterialInformation materialInformation=new MaterialInformation();
-            materialInformation.setId(id);
-            materialInformation.setTag(0);
-            if(!saveOrUpdate(materialInformation)){
-                throw new Exception("删除合同失败");
-            }
-            return true;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public boolean deleteMaterialInformationByid(Integer id) throws Exception {
+        MaterialInformation materialInformation=new MaterialInformation();
+        materialInformation.setId(id);
+        materialInformation.setTag(0);
+        if(!saveOrUpdate(materialInformation)){
+            throw new Exception("删除原料失败");
         }
+        return true;
     }
 
     @Override
-    public Object selectMaterialInformation() {
+    public List<MaterialInformation> selectMaterialInformation() {
         QueryWrapper<MaterialInformation> queryWrapper=new QueryWrapper<MaterialInformation>()
                 .eq("tag",1);
         return list(queryWrapper);

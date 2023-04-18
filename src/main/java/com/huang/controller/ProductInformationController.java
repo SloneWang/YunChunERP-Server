@@ -9,18 +9,24 @@ import com.huang.service.ProductInformationServiceImpl;
 import com.huang.service.ProductListServiceImpl;
 import com.huang.vo.SaveOrUpdateProductInformationVO;
 import com.huang.vo.UpdateContractVO;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.reader.StreamReader;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.BufferedReader;
 import java.util.List;
 
 @RestController
 @RequestMapping("/productInformation")
 public class ProductInformationController {
-    @Resource
+    @Autowired
     ProductInformationServiceImpl productInformationService;
-    @Resource
+    @Autowired
     MaterialInformationServiceImpl materialInformationService;
 
     @GetMapping("/selectProductInformation")
@@ -51,28 +57,19 @@ public class ProductInformationController {
     }
 
     @GetMapping("/selectMaterialInformation")
-    public Object selectMaterialInformation(){
-        try {
-            return materialInformationService.selectMaterialInformation();
-        } catch (Exception e) {
-            return e.toString();
-        }
+    public List<MaterialInformation> selectMaterialInformation(){
+        return materialInformationService.selectMaterialInformation();
     }
 
     @PostMapping("/saveOrUpdateMaterialInformation")
-    public Object saveOrUpdateMaterialInformation(@RequestBody MaterialInformation materialInformation){
-        try {
-            return materialInformationService.saveOrUpdateMaterialInformation(materialInformation);
-        } catch (Exception e) {
-            return e.toString();
-        }
+    public boolean saveOrUpdateMaterialInformation(@RequestBody MaterialInformation materialInformation) throws Exception{
+
+        System.out.println(materialInformation.toString());
+        return materialInformationService.saveOrUpdateMaterialInformation(materialInformation);
     }
+
     @DeleteMapping("/deleteMaterialInformation/{id}")
-    public Object deleteMaterialInformation(@PathVariable Integer id){
-        try {
-            return materialInformationService.deleteMaterialInformationByid(id);
-        } catch (Exception e) {
-            return e.toString();
-        }
+    public boolean deleteMaterialInformation(@PathVariable Integer id) throws Exception{
+        return materialInformationService.deleteMaterialInformationByid(id);
     }
 }
