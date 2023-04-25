@@ -21,4 +21,81 @@
         where product_id=#{productId};
     </select>
 
+    <insert id="insertMaterialReturn" parameterType="com.huang.entity.MaterialReturn" useGeneratedKeys="true" keyProperty="id">
+        insert into yunchun.material_return(list_id,material_id,material_number,charge_person,return_time)
+        VALUES(#{listId},#{materialId},#{materialNumber},#{chargePerson},#{returnTime});
+    </insert>
+
+    <insert id="insertMaterialApply" parameterType="com.huang.entity.MaterialApply" useGeneratedKeys="true" keyProperty="id">
+        insert into yunchun.material_apply(list_id,material_id,material_number,charge_person,apply_time,reviewer_no,apply_result)
+        VALUES(#{listId},#{materialId},#{materialNumber},#{chargePerson},#{applyTime},#{reviewerNo},#{applyResult});
+    </insert>
+
+    <select id="selectMaterialReturn" resultType="com.huang.entity.MaterialReturn">
+        select *
+        from yunchun.material_return
+        where list_id=#{listId};
+    </select>
+
+    <select id="selectMaterialApply" resultType="com.huang.entity.MaterialApply">
+        select *
+        from yunchun.material_apply
+        where list_id=#{listId};
+    </select>
+
+    <update id="updateMaterialReturn" parameterType="com.huang.entity.MaterialReturn">
+        update  yunchun.material_return
+        <set>
+            <if test="listId!=null">
+                list_id = #{listId},
+            </if>
+            <if test="materialId!=null">
+                material_id = #{materialId},
+            </if>
+            <if test="materialNumber!=null">
+                material_number= #{materialNumber},
+            </if>
+            <if test="chargePerson!=null">
+                charge_person=#{chargePerson},
+            </if>
+            <if test="returnTime!=null">
+                return_time=#{returnTime}
+            </if>
+        </set>
+        <where>
+            id= #{id}
+        </where>
+    </update>
+
+    <update id="updateMaterialApply" parameterType="com.huang.entity.MaterialApply">
+        update  yunchun.material_apply
+        <set>
+            <if test="listId!=null">
+                list_id = #{listId},
+            </if>
+            <if test="materialId!=null">
+                material_id = #{materialId},
+            </if>
+            <if test="materialNumber!=null">
+                material_number= #{materialNumber},
+            </if>
+            <if test="chargePerson!=null">
+                charge_person=#{chargePerson},
+            </if>
+            <if test="applyTime!=null">
+                apply_time=#{applyTime},
+            </if>
+            <if test="reviewerNo!=null">
+                reviewer_no=#{reviewerNo},
+            </if>
+            <if test="applyResult!=null">
+                apply_result=#{applyResult}
+            </if>
+        </set>
+        <where>
+            id= #{id}
+        </where>
+    </update>
+
+
 </mapper>

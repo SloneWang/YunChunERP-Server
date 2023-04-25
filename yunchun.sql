@@ -45,6 +45,36 @@ LOCK TABLES `account_record` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `apply_product`
+--
+
+DROP TABLE IF EXISTS `apply_product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `apply_product` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `contract_id` int DEFAULT NULL COMMENT '合同id',
+  `material_id` int DEFAULT NULL COMMENT '增货材料id',
+  `material_number` decimal(10,2) DEFAULT NULL COMMENT '增货数量',
+  `modify_by` varchar(20) DEFAULT NULL COMMENT '增货申请人',
+  `apply_time` datetime DEFAULT NULL COMMENT '申请时间',
+  `material_price` decimal(10,2) DEFAULT NULL COMMENT '材料价格',
+  `reviewer_no` varchar(20) DEFAULT NULL COMMENT '审核人',
+  `apply_result` varchar(10) DEFAULT NULL COMMENT '审核结果',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `apply_product`
+--
+
+LOCK TABLES `apply_product` WRITE;
+/*!40000 ALTER TABLE `apply_product` DISABLE KEYS */;
+/*!40000 ALTER TABLE `apply_product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `contract_history`
 --
 
@@ -59,7 +89,7 @@ CREATE TABLE `contract_history` (
   `review_by` varchar(50) DEFAULT NULL COMMENT '审核人编号',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注信息',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +98,6 @@ CREATE TABLE `contract_history` (
 
 LOCK TABLES `contract_history` WRITE;
 /*!40000 ALTER TABLE `contract_history` DISABLE KEYS */;
-INSERT INTO `contract_history` VALUES (11,'XS000001','2023-04-08 07:41:05','wizard','wizard','发票类型不小心填错了'),(12,'XS000001','2023-04-08 08:21:58','wizard',NULL,NULL);
 /*!40000 ALTER TABLE `contract_history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -105,9 +134,10 @@ CREATE TABLE `contract_information` (
   `install_cost` decimal(10,2) DEFAULT NULL COMMENT '安装成本',
   `total_gross_profit` decimal(10,2) DEFAULT NULL COMMENT '总毛利润',
   `total_net_profit` decimal(10,2) DEFAULT NULL COMMENT '总净利润',
+  `install_add_rate` decimal(10,2) DEFAULT NULL COMMENT '安装费加价率',
   PRIMARY KEY (`id`),
   KEY `SIGNDATE` (`sign_date`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -608,6 +638,32 @@ LOCK TABLES `inputparm` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `list_material_requirement`
+--
+
+DROP TABLE IF EXISTS `list_material_requirement`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `list_material_requirement` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `list_id` int DEFAULT NULL COMMENT '产品列表id',
+  `material_id` int DEFAULT NULL COMMENT '材料id',
+  `material_number` decimal(10,0) DEFAULT NULL COMMENT '材料数量',
+  `tag` int DEFAULT '0' COMMENT '审核标志',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `list_material_requirement`
+--
+
+LOCK TABLES `list_material_requirement` WRITE;
+/*!40000 ALTER TABLE `list_material_requirement` DISABLE KEYS */;
+/*!40000 ALTER TABLE `list_material_requirement` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `loading_system_module`
 --
 
@@ -690,15 +746,15 @@ DROP TABLE IF EXISTS `material_apply`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `material_apply` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `contract_no` varchar(20) DEFAULT NULL COMMENT '合同编号',
-  `material_type` varchar(11) DEFAULT NULL COMMENT '材料编号',
+  `list_id` int DEFAULT NULL COMMENT '列表id',
+  `material_id` int DEFAULT NULL COMMENT '材料id',
   `material_number` decimal(10,2) DEFAULT NULL COMMENT '申领数量',
   `charge_person` varchar(10) DEFAULT NULL COMMENT '申领人编号',
   `apply_time` datetime DEFAULT NULL COMMENT '申请时间',
   `reviewer_no` varchar(20) DEFAULT NULL COMMENT '审核人编号',
-  `remark` varchar(50) DEFAULT NULL COMMENT '备注',
+  `apply_result` varchar(10) DEFAULT NULL COMMENT '申请结果',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -708,6 +764,31 @@ CREATE TABLE `material_apply` (
 LOCK TABLES `material_apply` WRITE;
 /*!40000 ALTER TABLE `material_apply` DISABLE KEYS */;
 /*!40000 ALTER TABLE `material_apply` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `material_cost_record`
+--
+
+DROP TABLE IF EXISTS `material_cost_record`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `material_cost_record` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `material_id` int DEFAULT NULL COMMENT '材料id',
+  `material_cost` decimal(10,2) DEFAULT NULL COMMENT '材料修改前成本',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `material_cost_record`
+--
+
+LOCK TABLES `material_cost_record` WRITE;
+/*!40000 ALTER TABLE `material_cost_record` DISABLE KEYS */;
+/*!40000 ALTER TABLE `material_cost_record` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -728,7 +809,7 @@ CREATE TABLE `material_information` (
   `lowest_add_rate` decimal(5,2) DEFAULT NULL COMMENT '最低加价率',
   `tag` int DEFAULT '1' COMMENT '是否失效',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -756,7 +837,7 @@ CREATE TABLE `material_list` (
   `tag` int DEFAULT '0' COMMENT '是否生效',
   `material_price` decimal(10,2) DEFAULT NULL COMMENT '材料售价',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -781,7 +862,7 @@ CREATE TABLE `material_requirement` (
   `material_number` decimal(10,2) DEFAULT NULL COMMENT '材料数量',
   `product_id` int DEFAULT NULL COMMENT '产品id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -790,7 +871,6 @@ CREATE TABLE `material_requirement` (
 
 LOCK TABLES `material_requirement` WRITE;
 /*!40000 ALTER TABLE `material_requirement` DISABLE KEYS */;
-INSERT INTO `material_requirement` VALUES (4,1,1.00,6),(5,2,3.00,6),(6,3,1.00,6),(13,1,3.00,7),(14,2,10.00,7),(15,3,1.00,7);
 /*!40000 ALTER TABLE `material_requirement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -803,14 +883,13 @@ DROP TABLE IF EXISTS `material_return`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `material_return` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `material_type` varchar(10) DEFAULT NULL COMMENT '物品种类',
+  `list_id` int DEFAULT NULL COMMENT '列表id',
+  `material_id` int DEFAULT NULL COMMENT '材料id',
   `material_number` decimal(10,2) DEFAULT NULL COMMENT '退还数量',
-  `project_number` varchar(10) DEFAULT NULL COMMENT '项目编号',
   `charge_person` varchar(10) DEFAULT NULL COMMENT '负责人',
   `return_time` datetime DEFAULT NULL COMMENT '退还时间',
-  `remark` varchar(50) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -974,7 +1053,6 @@ CREATE TABLE `product_information` (
 
 LOCK TABLES `product_information` WRITE;
 /*!40000 ALTER TABLE `product_information` DISABLE KEYS */;
-INSERT INTO `product_information` VALUES (6,'DZC0.5-0.7-S','蒸汽锅炉',0.28,500,0,1565,2425,1,50.00),(7,'DZC0.35-0.7/95/70-S','承压热水锅炉',0.28,400,101,1500,2225,1,50.00);
 /*!40000 ALTER TABLE `product_information` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -996,7 +1074,7 @@ CREATE TABLE `product_list` (
   `project_start` date DEFAULT NULL COMMENT '项目开始日期',
   `project_end` date DEFAULT NULL COMMENT '项目结束日期',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1062,6 +1140,36 @@ LOCK TABLES `project_cost` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `return_product`
+--
+
+DROP TABLE IF EXISTS `return_product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `return_product` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `contract_id` int DEFAULT NULL COMMENT '合同id',
+  `material_id` int DEFAULT NULL COMMENT '退货材料id',
+  `material_number` decimal(10,2) DEFAULT NULL COMMENT '材料数量',
+  `modify_by` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '退货负责人',
+  `return_time` datetime DEFAULT NULL COMMENT '退货时间',
+  `material_price` decimal(10,2) DEFAULT NULL COMMENT '退货售价',
+  `reviewer_no` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '审核人',
+  `return_result` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_estonian_ci DEFAULT NULL COMMENT '审核结果',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `return_product`
+--
+
+LOCK TABLES `return_product` WRITE;
+/*!40000 ALTER TABLE `return_product` DISABLE KEYS */;
+/*!40000 ALTER TABLE `return_product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `review_request`
 --
 
@@ -1075,12 +1183,12 @@ CREATE TABLE `review_request` (
   `remark` varchar(500) DEFAULT NULL COMMENT '申请信息',
   `request_date` datetime DEFAULT NULL COMMENT '申请时间',
   `reviewer_no` varchar(20) DEFAULT NULL COMMENT '审核人编号',
-  `review_result` varchar(5) DEFAULT NULL COMMENT '审核结果',
+  `review_result` varchar(5) DEFAULT '待审核' COMMENT '审核结果',
   `review_date` datetime DEFAULT NULL COMMENT '审核时间',
   `index_no` int DEFAULT '0' COMMENT '修改索引',
   `additional_information` varchar(500) DEFAULT NULL COMMENT '附加信息',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1089,7 +1197,6 @@ CREATE TABLE `review_request` (
 
 LOCK TABLES `review_request` WRITE;
 /*!40000 ALTER TABLE `review_request` DISABLE KEYS */;
-INSERT INTO `review_request` VALUES (2,'创建新合同','wizard','客户非常着急，请尽快批复','2023-04-08 07:03:40','wizard','审核通过','2023-04-08 07:07:50',16,'总基价：27260.16\n总售价：31000\n订金：5000\n提货收款：15000\n安装收款：1000\n质保收款：10000\n质保期：6'),(6,'修改合同信息','wizard','发票类型不小心填错了','2023-04-08 07:41:05','wizard','审核通过','2023-04-08 07:42:00',16,'UpdateContractVO(id=16, modifyBy=wizard, invoiceType=普通, installAddress=null, deliveryMethod=null, employeeNo=null, signFee=null, pickFee=null, installFee=null, warrantyFee=null, warrantyPeriod=null, updateReason=发票类型不小心填错了)');
 /*!40000 ALTER TABLE `review_request` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1344,4 +1451,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-09 14:03:57
+-- Dump completed on 2023-04-25 13:12:03

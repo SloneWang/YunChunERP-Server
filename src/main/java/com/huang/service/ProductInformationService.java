@@ -11,8 +11,8 @@ import java.util.List;
 
 
 public interface ProductInformationService extends IService<ProductInformation> {
-    Object saveOrUpdateProductInformation(ProductInformation productInformation, List<MaterialRequirement> materialRequirements);
-    Object deleteProductInformationByid(Integer id);
-    Object selectProductInformation();
-    ProductInformationDTO selectProductInformationById(Integer id);
+    boolean saveOrUpdateProductInformation(ProductInformation productInformation, List<MaterialRequirement> materialRequirements);
+    boolean deleteProductInformationByid(Integer id);
+    List<ProductInformationDTO> selectProductInformation();
+    ProductInformationDTO selectProductInformationByListId(Integer productId,Integer listId);
 }

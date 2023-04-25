@@ -1,6 +1,9 @@
 package com.huang.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.huang.entity.ApplyProduct;
+import com.huang.entity.MaterialApply;
+import com.huang.entity.ReturnProduct;
 import com.huang.entity.ReviewRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,4 +20,7 @@ public interface ReviewRequestMapper extends BaseMapper<ReviewRequest> {
     Boolean deleteContractProduct(String ContractNo);
     Boolean deleteContract(String ContractNo);
     boolean upDateContractHistory(String reviewBy,Integer id);
+    List<MaterialApply> selectMaterialApply(Integer id);
+    List<ApplyProduct> selectApplyProduct(Integer id);
+    List<ReturnProduct> selectReturnProduct(Integer id);
 }

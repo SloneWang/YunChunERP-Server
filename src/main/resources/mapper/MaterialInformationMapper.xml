@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huang.mapper.MaterialInformationMapper">
+
+    <insert id="insertMaterialCostRecord" parameterType="com.huang.entity.MaterialCostRecord" >
+        insert into yunchun.material_cost_record(material_id,material_cost,update_time)
+        VALUES(#{materialId},#{materialCost},#{updateTime});
+    </insert>
+
+    <select id="selectMaterialCostRecord" resultType="com.huang.entity.MaterialCostRecord">
+        select *
+        from yunchun.material_cost_record
+        where material_id=#{materialId};
+    </select>
+
+
+</mapper>

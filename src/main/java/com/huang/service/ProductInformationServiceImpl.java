@@ -3,6 +3,7 @@ package com.huang.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.huang.dto.ProductInformationDTO;
+import com.huang.entity.ListMaterialRequirement;
 import com.huang.entity.MaterialInformation;
 import com.huang.entity.MaterialRequirement;
 import com.huang.entity.ProductInformation;
@@ -24,7 +25,7 @@ public class ProductInformationServiceImpl extends ServiceImpl<ProductInformatio
 
     @Override
     @Transactional
-    public Object saveOrUpdateProductInformation(ProductInformation productInformation, List<MaterialRequirement> materialRequirements) {
+    public boolean saveOrUpdateProductInformation(ProductInformation productInformation, List<MaterialRequirement> materialRequirements) {
         try {
             QueryWrapper<ProductInformation> queryWrapper=new QueryWrapper<ProductInformation>()
                     .eq("product_name",productInformation.getProductName())
@@ -57,7 +58,7 @@ public class ProductInformationServiceImpl extends ServiceImpl<ProductInformatio
 
     @Override
     @Transactional
-    public Object deleteProductInformationByid(Integer id) {
+    public boolean deleteProductInformationByid(Integer id) {
         try {
             ProductInformation tempProductInformation=new ProductInformation();
             tempProductInformation.setId(id);
@@ -72,7 +73,7 @@ public class ProductInformationServiceImpl extends ServiceImpl<ProductInformatio
     }
 
     @Override
-    public Object selectProductInformation() {
+    public List<ProductInformationDTO> selectProductInformation() {
         List<ProductInformationDTO> productInformationDTOS = new ArrayList<>();
         QueryWrapper<ProductInformation> queryWrapper1=new QueryWrapper<ProductInformation>()
                 .eq("tag",1);
@@ -96,18 +97,18 @@ public class ProductInformationServiceImpl extends ServiceImpl<ProductInformatio
     }
 
     @Override
-    public ProductInformationDTO selectProductInformationById(Integer id) {
+    public ProductInformationDTO selectProductInformationByListId(Integer productId,Integer listId) {
         QueryWrapper<ProductInformation> queryWr=new QueryWrapper<>();
-        queryWr.eq("id",id);
+        queryWr.eq("id",productId);
         ProductInformation pro=getOne(queryWr);
         ProductInformationDTO productInformationDTO = new ProductInformationDTO();
         productInformationDTO.setLowestAddRate(pro.getLowestAddRate());
         BigDecimal tempPrice = new BigDecimal("0");
         tempPrice = tempPrice.add(pro.getCoConsumableMaterial().add(pro.getCompositeMaterial().add(pro.getMasonryLabor().add(pro.getOntologyLabor().add(pro.getRandomFiles())))));
-        for (MaterialRequirement ma : productInformationMapper.selectMaterialRequirementByProductId(pro.getId())) {
+        for (ListMaterialRequirement rere : productInformationMapper.selectListMaterialRequirementByListId(listId)){
             QueryWrapper<MaterialInformation> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("id", ma.getMaterialId());
-            tempPrice=tempPrice.add(ma.getMaterialNumber().multiply(materialInformationService.getOne(queryWrapper).getUnitPrice()));
+            queryWrapper.eq("id",rere.getMaterialId());
+            tempPrice=tempPrice.add(rere.getMaterialNumber().multiply(materialInformationService.getOne(queryWrapper).getUnitPrice()));
         }
         productInformationDTO.setProductPrice(tempPrice);
         return productInformationDTO;

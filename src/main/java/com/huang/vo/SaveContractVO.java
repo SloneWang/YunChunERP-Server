@@ -42,4 +42,6 @@ public class SaveContractVO {
     private BigDecimal totalBasePrice;
     //总售价
     private BigDecimal totalSalePrice;
+    //安装费加价率
+    private BigDecimal installAddRate;
 }

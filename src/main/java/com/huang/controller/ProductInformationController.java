@@ -1,32 +1,22 @@
 package com.huang.controller;
 
-import com.huang.entity.MaterialInformation;
-import com.huang.entity.MaterialRequirement;
-import com.huang.entity.ProductInformation;
-import com.huang.service.MaterialInformationServiceImpl;
-import com.huang.service.MaterialListServiceImpl;
-import com.huang.service.ProductInformationServiceImpl;
-import com.huang.service.ProductListServiceImpl;
-import com.huang.vo.SaveOrUpdateProductInformationVO;
-import com.huang.vo.UpdateContractVO;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.huang.entity.*;
+import com.huang.service.MaterialInformationServiceImpl;
+import com.huang.service.ProductInformationServiceImpl;
+import com.huang.vo.SaveOrUpdateProductInformationVO;
+
 import org.springframework.web.bind.annotation.*;
-import org.yaml.snakeyaml.reader.StreamReader;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.BufferedReader;
 import java.util.List;
 
 @RestController
 @RequestMapping("/productInformation")
 public class ProductInformationController {
-    @Autowired
+    @Resource
     ProductInformationServiceImpl productInformationService;
-    @Autowired
+    @Resource
     MaterialInformationServiceImpl materialInformationService;
 
     @GetMapping("/selectProductInformation")
@@ -34,42 +24,74 @@ public class ProductInformationController {
         try {
             return productInformationService.selectProductInformation();
         } catch (Exception e) {
-            return e.toString();
+            throw new RuntimeException(e);
         }
     }
 
+//    @PostMapping("/saveOrUpdateProductInformation")
+//    public Object saveOrUpdateProductInformation(@RequestParam("productInformation") String productInformation, @RequestParam("material") String materialRequirements){
+//        try {
+//              List<MaterialList> ma=new ArrayList<>();
+//            return productInformationService.saveOrUpdateProductInformation(JSON.parseObject(productInformation, ProductInformation.class),
+//                    JSON.parseObject(materialRequirements, ma.getClass()));
+//        } catch (Exception e) {
+//            return e.toString();
+//        }
+//    }
+
     @PostMapping("/saveOrUpdateProductInformation")
-    public Object saveOrUpdateProductInformation(@RequestBody SaveOrUpdateProductInformationVO saveOrUpdateProductInformationVO){
+    public boolean saveOrUpdateProductInformation(@RequestBody SaveOrUpdateProductInformationVO saveOrUpdateProductInformationVO){
         try {
             return productInformationService.saveOrUpdateProductInformation(saveOrUpdateProductInformationVO.getProductInformation(),saveOrUpdateProductInformationVO.getMaterialRequirements());
         } catch (Exception e) {
-            return e.toString();
+            throw new RuntimeException(e);
         }
     }
 
     @DeleteMapping("/deleteProductInformation/{id}")
-    public Object deleteProductInformation(@PathVariable Integer id){
+    public boolean deleteProductInformation(@PathVariable Integer id){
         try {
             return productInformationService.deleteProductInformationByid(id);
         } catch (Exception e) {
-            return e.toString();
+            throw new RuntimeException(e);
         }
     }
 
     @GetMapping("/selectMaterialInformation")
     public List<MaterialInformation> selectMaterialInformation(){
-        return materialInformationService.selectMaterialInformation();
+        try {
+            return materialInformationService.selectMaterialInformation();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PostMapping("/saveOrUpdateMaterialInformation")
-    public boolean saveOrUpdateMaterialInformation(@RequestBody MaterialInformation materialInformation) throws Exception{
-
-        System.out.println(materialInformation.toString());
-        return materialInformationService.saveOrUpdateMaterialInformation(materialInformation);
+    public boolean saveOrUpdateMaterialInfo(@RequestBody MaterialInformation materialInformation){
+        try {
+            return materialInformationService.saveOrUpdateMaterialInformation(materialInformation);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @DeleteMapping("/deleteMaterialInformation/{id}")
-    public boolean deleteMaterialInformation(@PathVariable Integer id) throws Exception{
-        return materialInformationService.deleteMaterialInformationByid(id);
+    public boolean deleteMaterialInformation(@PathVariable Integer id){
+        try {
+            return materialInformationService.deleteMaterialInformationByid(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
+
+    //查询对应材料的历史价格变动记录
+    @GetMapping("/selectMaterialCostRecord/{materialId}")
+    public List<MaterialCostRecord> selectMaterialCostRecord(Integer materialId){
+        try {
+            return materialInformationService.selectMaterialCostRecord(materialId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

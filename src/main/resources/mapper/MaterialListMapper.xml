@@ -21,4 +21,93 @@
         where material_id=#{materialId};
     </select>
 
+    <insert id="insertReturnProduct" parameterType="com.huang.entity.ReturnProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into yunchun.return_product(contract_id,material_id,material_number,modify_by,return_time,material_price,reviewer_no,return_result)
+        VALUES(#{contractId},#{materialId},#{materialNumber},#{modifyBy},#{returnTime},#{materialPrice},#{reviewerNo},#{returnResult});
+    </insert>
+
+    <insert id="insertApplyProduct" parameterType="com.huang.entity.ApplyProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into yunchun.apply_product(contract_id,material_id,material_number,modify_by,apply_time,material_price,reviewer_no,apply_result)
+        VALUES(#{contractId},#{materialId},#{materialNumber},#{modifyBy},#{applyTime},#{materialPrice},#{reviewerNo},#{applyResult});
+    </insert>
+
+    <select id="selectReturnProduct" resultType="com.huang.entity.ReturnProduct">
+        select *
+        from yunchun.return_product
+        where contract_id=#{contractId};
+    </select>
+
+    <select id="selectApplyProduct" resultType="com.huang.entity.ApplyProduct">
+        select *
+        from yunchun.apply_product
+        where contract_id=#{contractId};
+    </select>
+
+    <update id="updateReturnProduct" parameterType="com.huang.entity.ReturnProduct">
+        update  yunchun.return_product
+        <set>
+            <if test="contractId!=null">
+                contract_id = #{contractId},
+            </if>
+            <if test="materialId!=null">
+                material_id = #{materialId},
+            </if>
+            <if test="materialNumber!=null">
+                material_number= #{materialNumber},
+            </if>
+            <if test="modifyBy!=null">
+                modify_by=#{modifyBy},
+            </if>
+            <if test="returnTime!=null">
+                return_time=#{returnTime},
+            </if>
+            <if test="materialPrice!=null">
+                material_price=#{materialPrice},
+            </if>
+            <if test="reviewerNo!=null">
+                reviewer_no=#{reviewerNo},
+            </if>
+            <if test="returnResult!=null">
+                return_result=#{returnResult}
+            </if>
+        </set>
+        <where>
+            id= #{id}
+        </where>
+    </update>
+
+    <update id="updateApplyProduct" parameterType="com.huang.entity.ApplyProduct">
+        update  yunchun.apply_product
+        <set>
+            <if test="contractId!=null">
+                contract_id = #{contractId},
+            </if>
+            <if test="materialId!=null">
+                material_id = #{materialId},
+            </if>
+            <if test="materialNumber!=null">
+                material_number= #{materialNumber},
+            </if>
+            <if test="modifyBy!=null">
+                modify_by=#{modifyBy},
+            </if>
+            <if test="applyTime!=null">
+                apply_time=#{applyTime},
+            </if>
+            <if test="materialPrice!=null">
+                material_price=#{materialPrice},
+            </if>
+            <if test="reviewerNo!=null">
+                reviewer_no=#{reviewerNo},
+            </if>
+            <if test="applyResult!=null">
+                apply_result=#{applyResult}
+            </if>
+        </set>
+        <where>
+            id= #{id}
+        </where>
+    </update>
+
+
 </mapper>

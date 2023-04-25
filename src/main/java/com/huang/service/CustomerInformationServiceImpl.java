@@ -17,7 +17,7 @@ public class CustomerInformationServiceImpl extends ServiceImpl<CustomerInformat
 
     @Override
     @Transactional
-    public Object saveOrUpdateCustomer(CustomerInformation customerInformation) {
+    public boolean saveOrUpdateCustomer(CustomerInformation customerInformation) {
         try {
             QueryWrapper<CustomerInformation> queryWrapper = new QueryWrapper<CustomerInformation>()
                     .eq("member_no",customerInformation.getMemberNo())
@@ -35,7 +35,7 @@ public class CustomerInformationServiceImpl extends ServiceImpl<CustomerInformat
                 }
             }
             if(!saveOrUpdate(customerInformation)){
-                return "未能成功保存客户信息";
+                throw new Exception("未能成功保存客户信息");
             }
             else return true;
         } catch (Exception e) {
@@ -44,14 +44,14 @@ public class CustomerInformationServiceImpl extends ServiceImpl<CustomerInformat
     }
 
     @Override
-    public Object selectAllCustomer() {
+    public List<CustomerInformation> selectAllCustomer() {
         QueryWrapper<CustomerInformation> queryWrapper=new QueryWrapper<CustomerInformation>()
                 .eq("tag",1);
         return list(queryWrapper);
     }
 
     @Override
-    public Object deleteCustomerByid(Integer id) {
+    public boolean deleteCustomerByid(Integer id) {
         try {
             CustomerInformation customerInformation=new CustomerInformation();
             customerInformation.setId(id);

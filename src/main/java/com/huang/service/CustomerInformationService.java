@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.huang.common.Result;
 import com.huang.entity.CustomerInformation;
 
+import java.util.List;
+
 public interface CustomerInformationService extends IService<CustomerInformation> {
-    Object saveOrUpdateCustomer(CustomerInformation customerInformation);
-    Object selectAllCustomer();
-    Object deleteCustomerByid(Integer id);
+    boolean saveOrUpdateCustomer(CustomerInformation customerInformation);
+    List<CustomerInformation> selectAllCustomer();
+    boolean deleteCustomerByid(Integer id);
 }

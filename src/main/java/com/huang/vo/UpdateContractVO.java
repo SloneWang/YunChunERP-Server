@@ -19,14 +19,6 @@ public class UpdateContractVO {
     private String deliveryMethod;
     //负责员工
     private String employeeNo;
-    //订金
-    private BigDecimal signFee;
-    //提货收款
-    private BigDecimal pickFee;
-    //安装收款
-    private BigDecimal installFee;
-    //质保收款
-    private BigDecimal warrantyFee;
     //质保时间（月）
     private Integer warrantyPeriod;
     //修改原因

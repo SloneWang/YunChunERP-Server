@@ -1,10 +1,7 @@
 package com.huang.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.huang.entity.MaterialList;
-import com.huang.entity.MaterialRequirement;
-import com.huang.entity.ProductInformation;
-import com.huang.entity.ProductList;
+import com.huang.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +15,5 @@ public interface ProductInformationMapper extends BaseMapper<ProductInformation>
     boolean insertMaterialRequirement(MaterialRequirement materialRequirement);
     List<MaterialRequirement> selectMaterialRequirementByProductId(Integer productId);
     boolean deleteMaterialRequirementByProductId(Integer productId);
+    List<ListMaterialRequirement> selectListMaterialRequirementByListId(Integer listId);
 }

@@ -3,6 +3,7 @@ package com.huang.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,13 +13,13 @@ import java.sql.Date;
 @TableName(value = "contract_information")
 public class Contract {
     @TableId(type = IdType.AUTO)
-    //主键
+    @ApiModelProperty(name="主键")
     private Integer id;
-    //会员编号
+    @ApiModelProperty(name="会员编号")
     private String memberNo;
-    //合同编号
+    @ApiModelProperty(name="合同编号")
     private String contractNo;
-    //发票类型
+    @ApiModelProperty(name="发票类型")
     private String invoiceType;
     //创建员工编号
     private String CreateEmployeeNo ;
@@ -62,4 +63,6 @@ public class Contract {
     private BigDecimal totalNetProfit;
     //合同总毛利润
     private BigDecimal totalGrossProfit;
+    //安装费加价率
+    private BigDecimal installAddRate;
 }

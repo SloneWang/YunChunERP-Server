@@ -43,4 +43,26 @@
         </where>
     </update>
 
+    <delete id="deleteMaterialApply">
+        delete from yunchun.material_apply
+        where id=#{id};
+    </delete>
+
+    <select id="selectMaterialApply" resultType="com.huang.entity.MaterialApply">
+        select *
+        from yunchun.material_apply
+        where id=#{id};
+    </select>
+    <select id="selectApplyProduct" resultType="com.huang.entity.ApplyProduct">
+        select *
+        from yunchun.apply_product
+        where id=#{id};
+    </select>
+    <select id="selectReturnProduct" resultType="com.huang.entity.ReturnProduct">
+        select *
+        from yunchun.return_product
+        where id=#{id};
+    </select>
+
+
 </mapper>

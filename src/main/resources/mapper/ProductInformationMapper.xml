@@ -22,6 +22,10 @@
         delete from yunchun.material_requirement
         where product_id= #{productId};
     </delete>
-
+    <select id="selectListMaterialRequirementByListId" resultType="com.huang.entity.ListMaterialRequirement">
+        select *
+        from yunchun.list_material_requirement
+        where list_id=#{listId};
+    </select>
 
 </mapper>
