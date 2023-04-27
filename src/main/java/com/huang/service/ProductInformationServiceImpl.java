@@ -8,6 +8,8 @@ import com.huang.entity.MaterialInformation;
 import com.huang.entity.MaterialRequirement;
 import com.huang.entity.ProductInformation;
 import com.huang.mapper.ProductInformationMapper;
+import com.huang.vo.SaveOrUpdateProductInformationVO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,21 @@ public class ProductInformationServiceImpl extends ServiceImpl<ProductInformatio
     ProductInformationMapper productInformationMapper;
     @Autowired
     MaterialInformationServiceImpl materialInformationService;
+
+    @Override
+    @Transactional
+    public SaveOrUpdateProductInformationVO getProductDetail(Integer id)
+    {
+        QueryWrapper<ProductInformation> queryWrapper =
+            new QueryWrapper<ProductInformation>()
+            .eq("id", id);
+        ProductInformation product = queryWrapper.getEntity();
+        List<MaterialRequirement> requirements = productInformationMapper.selectMaterialRequirementByProductId(id);
+        SaveOrUpdateProductInformationVO result = new SaveOrUpdateProductInformationVO();
+        result.setProductInformation(product);
+        result.setMaterialRequirements(requirements);
+        return result;
+    }
 
     @Override
     @Transactional

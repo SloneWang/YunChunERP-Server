@@ -39,6 +39,11 @@ public class ProductInformationController {
 //        }
 //    }
 
+    @GetMapping("/getProductDetail/{id}")
+    public SaveOrUpdateProductInformationVO getProductDetail(@PathVariable Integer id) {
+        return productInformationService.getProductDetail(id);
+    }
+
     @PostMapping("/saveOrUpdateProductInformation")
     public boolean saveOrUpdateProductInformation(@RequestBody SaveOrUpdateProductInformationVO saveOrUpdateProductInformationVO){
         try {
