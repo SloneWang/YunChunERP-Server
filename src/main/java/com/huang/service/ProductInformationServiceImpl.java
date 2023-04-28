@@ -29,10 +29,7 @@ public class ProductInformationServiceImpl extends ServiceImpl<ProductInformatio
     @Transactional
     public SaveOrUpdateProductInformationVO getProductDetail(Integer id)
     {
-        QueryWrapper<ProductInformation> queryWrapper =
-            new QueryWrapper<ProductInformation>()
-            .eq("id", id);
-        ProductInformation product = queryWrapper.getEntity();
+        ProductInformation product = this.getById(id);
         List<MaterialRequirement> requirements = productInformationMapper.selectMaterialRequirementByProductId(id);
         SaveOrUpdateProductInformationVO result = new SaveOrUpdateProductInformationVO();
         result.setProductInformation(product);
