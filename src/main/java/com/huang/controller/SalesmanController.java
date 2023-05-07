@@ -4,6 +4,7 @@ package com.huang.controller;
 import com.huang.dto.AllContractDTO;
 import com.huang.dto.ContractSimpleDTO;
 import com.huang.entity.ContractHistory;
+import com.huang.entity.PayReturn;
 import com.huang.service.SalesmanServiceImpl;
 import com.huang.vo.SaveContractVO;
 import com.huang.vo.UpdateContractVO;
@@ -132,6 +133,23 @@ public class SalesmanController {
     public boolean cancelContractLimit(@PathVariable Integer id,@PathVariable String employeeNo,@PathVariable String requestComment){
         try {
             return salesmanService.cancelContractLimit(id,employeeNo,requestComment);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/payReturn/{id}")
+    public boolean payReturn(@PathVariable Integer id){
+        try {
+            return salesmanService.payReturn(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @GetMapping("/selectPayReturn")
+    public List<PayReturn> payReturn(){
+        try {
+            return salesmanService.selectPayReturn();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

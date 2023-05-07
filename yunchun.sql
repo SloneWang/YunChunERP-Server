@@ -1,10 +1,10 @@
 CREATE DATABASE  IF NOT EXISTS `yunchun` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `yunchun`;
--- MySQL dump 10.13  Distrib 8.0.30, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.33, for macos13 (arm64)
 --
 -- Host: localhost    Database: yunchun
 -- ------------------------------------------------------
--- Server version	8.0.30
+-- Server version	8.0.33
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -333,7 +333,7 @@ CREATE TABLE `customer_information` (
   `channel` varchar(50) DEFAULT NULL COMMENT '渠道来源',
   `tag` int DEFAULT '1' COMMENT '是否生效',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -342,7 +342,7 @@ CREATE TABLE `customer_information` (
 
 LOCK TABLES `customer_information` WRITE;
 /*!40000 ALTER TABLE `customer_information` DISABLE KEYS */;
-INSERT INTO `customer_information` VALUES (7,'00000001','李汉','15544426066','李阳','11262673348','天津钢铁厂','钢铁生产','业务员','微信公众号',1),(10,'00000002','网三','13344426066','王五','18862673348','北京钢铁厂','货物运输','经理','qqqq公众号',1);
+INSERT INTO `customer_information` VALUES (7,'00000001','李汉','15544426066','李阳','11262673348','天津钢铁厂','钢铁生产','业务员','微信公众号',1),(10,'00000002','网三','13344426066','王五','18862673348','北京钢铁厂','货物运输','经理','qqqq公众号',1),(11,'00000003','test','123','tset','1234','test','test','test','test2123',1);
 /*!40000 ALTER TABLE `customer_information` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -862,7 +862,7 @@ CREATE TABLE `material_requirement` (
   `material_number` decimal(10,2) DEFAULT NULL COMMENT '材料数量',
   `product_id` int DEFAULT NULL COMMENT '产品id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -871,6 +871,7 @@ CREATE TABLE `material_requirement` (
 
 LOCK TABLES `material_requirement` WRITE;
 /*!40000 ALTER TABLE `material_requirement` DISABLE KEYS */;
+INSERT INTO `material_requirement` VALUES (31,1,1.00,9),(32,2,1.00,9),(33,3,2.00,9);
 /*!40000 ALTER TABLE `material_requirement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -889,7 +890,7 @@ CREATE TABLE `material_return` (
   `charge_person` varchar(10) DEFAULT NULL COMMENT '负责人',
   `return_time` datetime DEFAULT NULL COMMENT '退还时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1044,7 +1045,7 @@ CREATE TABLE `product_information` (
   `random_files` decimal(10,2) DEFAULT '50.00' COMMENT '随机文件',
   PRIMARY KEY (`id`),
   KEY `PRODUCTTYPE` (`product_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_estonian_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_estonian_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1053,6 +1054,7 @@ CREATE TABLE `product_information` (
 
 LOCK TABLES `product_information` WRITE;
 /*!40000 ALTER TABLE `product_information` DISABLE KEYS */;
+INSERT INTO `product_information` VALUES (9,'test','test',0.28,50,50,50,100,1,50.00);
 /*!40000 ALTER TABLE `product_information` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1386,7 +1388,7 @@ CREATE TABLE `sys_user` (
   `position` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '职位',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE KEY `username` (`username`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1395,7 +1397,7 @@ CREATE TABLE `sys_user` (
 
 LOCK TABLES `sys_user` WRITE;
 /*!40000 ALTER TABLE `sys_user` DISABLE KEYS */;
-INSERT INTO `sys_user` VALUES (1,'wizard','123456','黄鎏都','黄咕咕不是咕咕侠','1993362493@qq.com','1505238210912','重庆市江北区1','admin','2022-11-16 13:27:31',NULL,'管理员'),(8,'hibiki','123456','安达明日梦','响鬼','16633@qq.com',NULL,'重庆','普通用户','2022-11-16 13:27:38',NULL,'供热县级经理'),(21,'wizardhibiki','1234567','我','巫骑响鬼',NULL,NULL,NULL,NULL,'2022-11-16 13:28:22',NULL,'供热收费员'),(25,'850154120','123456','王旺旺','王汪汪',NULL,NULL,NULL,NULL,'2022-11-16 13:29:10',NULL,'供热市级经理'),(26,'1993362493','12345678','吴玉青','吴吴吴',NULL,NULL,NULL,NULL,'2022-11-16 13:29:06',NULL,'供热市级经理'),(27,'15052382109','123456789','wuwuwu','12345',NULL,NULL,NULL,NULL,'2023-04-08 07:11:00',NULL,'销售员'),(28,'saber','123456','黄','咕咕侠','','','重庆市','','2022-08-30 07:27:02',NULL,NULL),(29,'revice','1234567','aaaa','黄','1993362493@qq.com','1091','江北区1','','2022-08-31 03:41:08',NULL,NULL),(30,'55555','12345678','王天乐','黄','1993362493@qq.com','1091','江北区1','','2022-11-16 13:28:26',NULL,'供热收费员'),(36,'test','test',NULL,NULL,NULL,NULL,NULL,'普通用户','2022-09-24 04:36:35',NULL,NULL),(37,'admintest','123456','系统测试','系统测试账号','1993362493@qq.com','1505238210912','重庆市江北区1','admin','2022-12-11 08:44:40',NULL,'管理员');
+INSERT INTO `sys_user` VALUES (1,'wizard','123456','黄鎏都','黄咕咕不是咕咕侠','1993362493@qq.com','1505238210912','重庆市江北区1','admin','2022-11-16 13:27:31',NULL,'管理员'),(8,'hibiki','123456','安达明日梦','响鬼','16633@qq.com',NULL,'重庆','普通用户','2022-11-16 13:27:38',NULL,'供热县级经理'),(21,'wizardhibiki','1234567','我','巫骑响鬼',NULL,NULL,NULL,NULL,'2022-11-16 13:28:22',NULL,'供热收费员'),(25,'850154120','123456','王旺旺','王汪汪',NULL,NULL,NULL,NULL,'2022-11-16 13:29:10',NULL,'供热市级经理'),(26,'1993362493','12345678','吴玉青','吴吴吴',NULL,NULL,NULL,NULL,'2022-11-16 13:29:06',NULL,'供热市级经理'),(27,'15052382109','123456789','wuwuwu','12345',NULL,NULL,NULL,NULL,'2023-04-08 07:11:00',NULL,'销售员'),(28,'saber','123456','黄','咕咕侠','','','重庆市','','2022-08-30 07:27:02',NULL,NULL),(29,'revice','1234567','aaaa','黄','1993362493@qq.com','1091','江北区1','','2022-08-31 03:41:08',NULL,NULL),(30,'55555','12345678','王天乐','黄','1993362493@qq.com','1091','江北区1','','2022-11-16 13:28:26',NULL,'供热收费员'),(36,'test','test',NULL,NULL,NULL,NULL,NULL,'普通用户','2022-09-24 04:36:35',NULL,NULL),(37,'admintest','123456','系统测试','系统测试账号','1993362493@qq.com','1505238210912','重庆市江北区1','admin','2022-12-11 08:44:40',NULL,'管理员'),(38,'testtesttest',NULL,'testtesttest123','string','string','string','string','string','2023-05-06 02:08:04','string','string'),(40,'testtesttest222',NULL,'string','string','string','string','string','string','2023-05-07 09:29:42','string','string');
 /*!40000 ALTER TABLE `sys_user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1451,4 +1453,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-25 13:12:03
+-- Dump completed on 2023-05-07 20:48:20

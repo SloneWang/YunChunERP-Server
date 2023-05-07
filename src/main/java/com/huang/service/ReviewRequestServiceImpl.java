@@ -4,10 +4,7 @@ package com.huang.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.huang.entity.*;
-import com.huang.mapper.MaterialListMapper;
-import com.huang.mapper.ProductInformationMapper;
-import com.huang.mapper.ProductListMapper;
-import com.huang.mapper.ReviewRequestMapper;
+import com.huang.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +33,8 @@ public class ReviewRequestServiceImpl extends ServiceImpl<ReviewRequestMapper, R
     ListMaterialRequirementServiceImpl listMaterialRequirementService;
     @Autowired
     MaterialInformationServiceImpl materialInformationService;
+    @Autowired
+    SalesmanMapper salesmanMapper;
 
 
     @Override
@@ -88,6 +87,19 @@ public class ReviewRequestServiceImpl extends ServiceImpl<ReviewRequestMapper, R
                                 }
                             }
                         }
+
+                        //插入回款计划
+                        Contract tempContractInformation=salesmanService.getById(tempReviewRequest.getIndexNo());
+                        PayReturn payReturn=new PayReturn();
+                        payReturn.setContractId(tempReviewRequest.getIndexNo());
+                        payReturn.setAmount(tempContractInformation.getSignFee());
+                        payReturn.setStatus("待收取");
+                        payReturn.setType("合同订金");
+                        payReturn.setUpdateTime(new java.util.Date(System.currentTimeMillis()));
+                        if(!salesmanMapper.insertPayReturn(payReturn)){
+                            throw new Exception("回款计划保存失败");
+                        }
+
                     } else {
                         tempReviewRequest.setReviewResult("审核未通过");
                         if (!materialListMapper.deleteMaterialListByContractId(tempReviewRequest.getIndexNo())) {

@@ -222,7 +222,7 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
                 else {throw new Exception("无法找到对应编号的员工");}
             }
             else throw new Exception("员工编号缺失，创建合同失败");
-            contractTemp.setContractLifecycle("合同已签订");
+            contractTemp.setContractLifecycle("订金待收取");
             contractTemp.setInstallAddress(saveData.getInstallAddress());
             contractTemp.setDeliveryMethod(saveData.getDeliveryMethod());
             contractTemp.setBalance(new BigDecimal("0"));
@@ -251,7 +251,6 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
                 }
 
                 //保存用料列表
-
                 for(MaterialRequirement mma:productInformationMapper.selectMaterialRequirementByProductId(pro.getProductId())){
                     ListMaterialRequirement listMaterialRequirements=new ListMaterialRequirement();
                     listMaterialRequirements.setListId(tempPro.getId());
@@ -296,7 +295,6 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
                     throw new Exception("材料列表保存失败");
                 }
             }
-
 
             //插入待审批信息
             ReviewRequest reviewRequest =new ReviewRequest();
@@ -543,7 +541,7 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
             }
             if(contractSelect.getContractLifecycle().equals("生产完毕")){
                 tempContract.setId(id);
-                tempContract.setContractLifecycle("提货完毕");
+                tempContract.setContractLifecycle("提货费待收取");
                 tempContract.setPickDate(new Date(System.currentTimeMillis()));
                 if(!saveOrUpdate(tempContract)){
                     throw new Exception("合同更新失败");
@@ -571,7 +569,7 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
             //确认最终利润，之后不允许退货
             if(contractSelect.getContractLifecycle().equals("提货完毕")){
                 tempContract.setId(id);
-                tempContract.setContractLifecycle("安装完毕");
+                tempContract.setContractLifecycle("安装费待收取");
                 tempContract.setInstallCost(installCost);
                 tempContract.setInstallDate(new Date(System.currentTimeMillis()));
                 BigDecimal tempTotalGrossProfit=new BigDecimal("0");
@@ -613,7 +611,7 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
             }
             if(contractSelect.getContractLifecycle().equals("质保结束")){
                 tempContract.setId(id);
-                tempContract.setContractLifecycle("已结束");
+                tempContract.setContractLifecycle("质保费待收取");
                 if(!saveOrUpdate(tempContract)){
                     throw new Exception("合同更新失败");
                 }
@@ -704,7 +702,7 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
             //删除用料表
             for(ProductList pp:productListMapper.selectProductListByContractId(id)){
                 for(ListMaterialRequirement listMa:productInformationMapper.selectListMaterialRequirementByListId(pp.getId())){
-                    listMa.setTag(2);
+                    listMa.setTag(4);
                     if(!listMaterialRequirementService.saveOrUpdate(listMa)){
                         throw new Exception("用料列表更新失败");
                     }
@@ -713,14 +711,14 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
 
             //删除相关材料列表和产品列表
             for(ProductList pp:productListMapper.selectProductListByContractId(id)){
-                pp.setTag(2);
+                pp.setTag(4);
                 if(!productListService.saveOrUpdate(pp)){
                     throw new Exception("产品列表更新失败");
                 }
             }
 
             for(MaterialList mm:materialListMapper.selectMaterialListByContractId(id)){
-                mm.setTag(2);
+                mm.setTag(4);
                 if(!materialListService.saveOrUpdate(mm)){
                     throw new Exception("材料列表更新失败");
                 }
@@ -739,7 +737,7 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
             reviewRequestService.remove(queryWrapper1);
 
             //删除合同信息
-            contractTemp.setTag(2);
+            contractTemp.setTag(4);
             if(!saveOrUpdate(contractTemp)){
                 throw new Exception("合同信息更新失败");
             }
@@ -783,6 +781,50 @@ public class SalesmanServiceImpl extends ServiceImpl<SalesmanMapper, Contract> i
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    @Transactional
+    public boolean payReturn(Integer id) {
+        try {
+            PayReturn payReturn=salesmanMapper.selectPayReturnById(id).get(0);
+            if(!payReturn.getStatus().equals("待收取")){
+                throw new Exception("非待收取状态");
+            }
+            if(!salesmanMapper.updatePayReturn("已收取",id)){
+                throw new Exception("更新回款计划失败");
+            }
+            Contract tempContract = getById(payReturn.getContractId());
+            Contract updateContract=new Contract();
+            updateContract.setId(payReturn.getContractId());
+            switch (tempContract.getContractLifecycle()) {
+                case "订金待收取":
+                    updateContract.setContractLifecycle("合同已签订");
+                    break;
+                case "提货费待收取":
+                    updateContract.setContractLifecycle("提货完毕");
+                    break;
+                case "安装费待收取":
+                    updateContract.setContractLifecycle("安装完毕");
+                    break;
+                case "质保费待收取":
+                    updateContract.setContractLifecycle("已结束");
+                    break;
+                default:
+                    throw new Exception("合同生命周期异常");
+            }
+            if(!saveOrUpdate(updateContract)){
+                throw new Exception("更新合同信息失败");
+            }
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<PayReturn> selectPayReturn() {
+        return salesmanMapper.selectPayReturn();
     }
 }
 

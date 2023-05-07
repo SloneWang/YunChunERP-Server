@@ -1,6 +1,7 @@
 .git/
 .idea/
 .vscode/
+**/.DS_Store
 ContractDocuments/
 target/
 src/main/resources/application.yml

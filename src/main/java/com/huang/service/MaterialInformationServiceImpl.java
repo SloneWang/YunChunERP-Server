@@ -34,22 +34,40 @@ public class MaterialInformationServiceImpl extends ServiceImpl<MaterialInformat
                     throw new Exception("删除原数据失败");
                 }
             }
-            if(materialInformation.getUnitPrice()!=null&&materialInformation.getId()!=null){
-                QueryWrapper<MaterialInformation> queryWrapper1=new QueryWrapper<MaterialInformation>().eq("id",materialInformation.getId());
-                MaterialInformation materialInformation1=getOne(queryWrapper1);
+
+            QueryWrapper<MaterialInformation> queryWrapper1=new QueryWrapper<MaterialInformation>().eq("id",materialInformation.getId());
+            MaterialInformation materialInformation1=getOne(queryWrapper1);
+
+            if(materialInformation.getId()==null){
+                if(!saveOrUpdate(materialInformation)){
+                    throw new Exception("插入材料信息失败");
+                }
                 MaterialCostRecord materialCostRecord=new MaterialCostRecord();
                 materialCostRecord.setMaterialId(materialInformation.getId());
                 materialCostRecord.setUpdateTime(new Date(System.currentTimeMillis()));
-                materialCostRecord.setMaterialCost(materialInformation1.getUnitPrice());
+                materialCostRecord.setMaterialCost(materialInformation.getUnitPrice());
                 if(!materialInformationMapper.insertMaterialCostRecord(materialCostRecord)){
                     throw new Exception("插入价格变动记录失败");
                 }
             }
-
-
-            if(!saveOrUpdate(materialInformation)){
-                throw new Exception("插入材料信息失败");
+            else if(materialInformation.getUnitPrice()!=null&&materialInformation.getId()!=null&&materialInformation.getUnitPrice().compareTo(materialInformation1.getUnitPrice())!=0){
+                if(!saveOrUpdate(materialInformation)){
+                    throw new Exception("插入材料信息失败");
+                }
+                MaterialCostRecord materialCostRecord=new MaterialCostRecord();
+                materialCostRecord.setMaterialId(materialInformation.getId());
+                materialCostRecord.setUpdateTime(new Date(System.currentTimeMillis()));
+                materialCostRecord.setMaterialCost(materialInformation.getUnitPrice());
+                if(!materialInformationMapper.insertMaterialCostRecord(materialCostRecord)){
+                    throw new Exception("插入价格变动记录失败");
+                }
             }
+            else {
+                if(!saveOrUpdate(materialInformation)){
+                    throw new Exception("插入材料信息失败");
+                }
+            }
+
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -89,15 +107,6 @@ public class MaterialInformationServiceImpl extends ServiceImpl<MaterialInformat
 
     @Override
     public List<MaterialCostRecord> selectMaterialCostRecord(Integer materialId) {
-        QueryWrapper<MaterialInformation> queryWrapper=new QueryWrapper<MaterialInformation>()
-                .eq("id",materialId);
-        MaterialInformation materialInformation=getOne(queryWrapper);
-        List<MaterialCostRecord> materialCostRecords=materialInformationMapper.selectMaterialCostRecord(materialId);
-        MaterialCostRecord materialCostRecord=new MaterialCostRecord();
-        materialCostRecord.setMaterialId(materialId);
-        materialCostRecord.setMaterialCost(materialInformation.getUnitPrice());
-        materialCostRecord.setUpdateTime(new Date(System.currentTimeMillis()));
-        materialCostRecords.add(materialCostRecord);
-        return materialCostRecords;
+        return materialInformationMapper.selectMaterialCostRecord(materialId);
     }
 }

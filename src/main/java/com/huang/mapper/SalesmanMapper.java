@@ -24,4 +24,8 @@ public interface SalesmanMapper extends BaseMapper<Contract> {
      List<Contract> selectAllContract();
      List<Contract> selectContractInformationByEmployeeNo(String employeeNo);
      List<SysSettings> selectTaxRate();
+     boolean insertPayReturn(PayReturn payReturn);
+     boolean updatePayReturn(String status,Integer id);
+     List<PayReturn> selectPayReturn();
+     List<PayReturn> selectPayReturnById(Integer id);
 }

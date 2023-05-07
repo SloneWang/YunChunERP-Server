@@ -49,6 +49,24 @@
         select *
         from yunchun.sys_settings
     </select>
+    <insert id="insertPayReturn" parameterType="com.huang.entity.PayReturn" useGeneratedKeys="true" keyProperty="id">
+        insert into yunchun.pay_return(update_time,amount,type,contract_id,status)
+        VALUES(#{updateTime},#{amount},#{type},#{contractId},#{status});
+    </insert>
+    <update id="updatePayReturn" parameterType="com.huang.entity.PayReturn">
+        update  yunchun.pay_return
+        set status=#{status}
+        where id=#{id};
+    </update>
+    <select id="selectPayReturn" resultType="com.huang.entity.PayReturn">
+        select *
+        from yunchun.pay_return
+    </select>
+    <select id="selectPayReturnById" resultType="com.huang.entity.PayReturn">
+        select *
+        from yunchun.pay_return
+        where id=#{id};
+    </select>
 
 
 </mapper>

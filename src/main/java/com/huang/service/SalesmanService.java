@@ -7,6 +7,7 @@ import com.huang.dto.ContractSimpleDTO;
 import com.huang.entity.Contract;
 
 import com.huang.entity.ContractHistory;
+import com.huang.entity.PayReturn;
 import com.huang.vo.SaveContractVO;
 import com.huang.vo.UpdateContractVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,5 +34,7 @@ public interface SalesmanService extends IService<Contract> {
     boolean deleteContractLimit(Integer id,String employeeNo,String requestComment);
     boolean cancelContract(Integer id,String employeeNo,String reviewNo);
     boolean cancelContractLimit(Integer id,String employeeNo,String requestComment);
+    boolean payReturn(Integer id);
+    List<PayReturn> selectPayReturn();
     void autoUpdate();
 }
